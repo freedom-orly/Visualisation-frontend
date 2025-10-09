@@ -76,8 +76,6 @@ export class App {
   protected expanded = signal(false);
   protected open = false;
   protected switch = false;
-  protected readonly routes: any = {};
-  protected readonly breadcrumbs = ['Home', 'Angular', 'Repositories', 'Taiga UI'];
 
   protected readonly drawer = {
         Components: [

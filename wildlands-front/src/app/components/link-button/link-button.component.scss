@@ -1,0 +1,23 @@
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--tui-text-primary);
+  background-color: var(--tui-base-01);
+  transition: all 0.2s ease-in-out;
+  border: 2px solid red;
+
+  &:hover {
+    color: var(--tui-primary);
+    background-color: var(--tui-base-02);
+  }
+
+  tui-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}

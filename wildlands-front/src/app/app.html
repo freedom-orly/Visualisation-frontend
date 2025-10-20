@@ -30,8 +30,8 @@
             [routerLink]="['']"
         >
             Dashboard
-
         </button>
+
         <a
             iconStart="@tui.chart-spline"
             tuiAsideItem
@@ -39,6 +39,14 @@
         >
             Visualization
         </a>
+
+        <!-- ✅ Your custom LinkButton placed inside the sidebar -->
+        <app-link-button 
+            label="Go to Dashboard" 
+            link="/dashboard" 
+            iconName="tuiIconHome">
+        </app-link-button>
+
         <!-- <tui-aside-group>
             <button
                 automation-id="setting"
@@ -70,6 +78,7 @@
                 </ng-template>
             </button>
         </tui-aside-group> -->
+
         <button
             iconStart="@tui.folder"
             tuiAsideItem
@@ -78,6 +87,7 @@
         >
             <span tuiFade>Data upload</span>
         </button>
+
         <!-- <button
             iconEnd="@tui.chevron-right"
             iconStart="@tui.ellipsis"
@@ -143,15 +153,23 @@
         >
             Settings
         </button>
-        <footer >
-            
+
+        <footer>
         </footer>
     </aside>
+
     <main tuiNavigationMain>
-        
         <router-outlet></router-outlet>
+
+        <!-- 🧩 Added your LinkButton component here -->
+        <div style="margin-top: 2rem; display: flex; justify-content: center;">
+            <app-link-button
+                iconName="tuiIconSettings"
+                label="Settings"
+                link="/settings"
+            ></app-link-button>
+        </div>
+
     </main>
 </div>
-
-
 </tui-root>

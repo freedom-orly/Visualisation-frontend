@@ -1,0 +1,40 @@
+<div
+tuiAppearance="floating"
+tuiCardLarge
+>
+<header tuiHeader>
+
+    <h1 tuiTitle="l">
+        <span tuiSubtitle >Statistics</span>
+        {{title}}
+    </h1>
+
+
+</header>
+
+<section>
+    @if (appearance == 'History') {
+        <tui-axes
+        class="axes"
+        [horizontalLines]="2"
+        [verticalLines]="4"
+        [axisXLabels]="GetXAxisLabel()"
+        [axisYLabels]="GetYAxisLabel()"
+    >
+        <tui-line-chart
+            [filled]="true"
+            [height]="GetChartHeight()"
+            [smoothingFactor]="50"
+            [value]="value"
+            [width]="GetChartWidth()"
+            [x]="0"
+            [y]="0"
+        />
+    </tui-axes>
+    }
+    @else if (appearance == 'Forecast') {
+
+    }
+</section>
+
+</div>

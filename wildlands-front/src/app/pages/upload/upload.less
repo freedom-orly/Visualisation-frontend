@@ -1,0 +1,41 @@
+
+.split {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    .left-panel {
+        width: 60%
+    }
+
+    .right-panel {
+        gap: 1rem;
+        width: 40%;
+        .vl {
+            width: 2px;
+            background-color: #ccc;
+            height: 100%;
+            float: left;
+            margin: 0 10px;
+        }
+
+        .subright {
+            display: flex;
+            flex-direction: column;
+
+            .cell {
+                margin-bottom: 0px !important;
+                margin-top: 0px !important;
+                border-radius: 0px !important;
+                border-bottom: #ccc 1px solid;
+            }
+
+            .see-more-btn {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.desc {
+    overflow-wrap: break-word;
+}

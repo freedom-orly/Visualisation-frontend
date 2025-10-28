@@ -44,6 +44,10 @@ export class HttpService {
     return this.http.get<VisualizationDTO[]>(`${this.apiUrl}/visualizations`);
   }
 
+  getVisualizationById(id: number): Observable<VisualizationDTO> {
+    return this.http.get<VisualizationDTO>(`${this.apiUrl}/visualization/${id}`);
+  }
+
   getChart(req: ChartQuery): Observable<ChartDTO> {
     return this.http.post<ChartDTO>(`${this.apiUrl}/visualizations/chart`, req);
   }

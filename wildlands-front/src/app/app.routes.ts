@@ -16,7 +16,11 @@ export const routes: Routes = [
         component: Upload,
     },
     {
-        path: 'upload/:id',
+        path: 'upload/data/:id',
+        component: UploadDetails,
+    },
+    {
+        path: 'upload/rscript/:id',
         component: UploadDetails,
     },
     {

@@ -1,1 +1,133 @@
-<p>upload-details works!</p>
+<tui-breadcrumbs [size]="'l'">
+    @for (item of breadcrumbsItems; track $index) {
+    <a *tuiItem tuiLink [routerLink]="item.routerLink">{{item.caption}}</a>
+    }
+</tui-breadcrumbs>
+<hr>
+<div class="split">
+    <div class="left-panel">
+        <p tuiTextfieldSize="m" class="filters">
+            <tui-textfield class="input">
+                <label tuiLabel>Find on page</label>
+                <input tuiTextfield [(ngModel)]="search" />
+            </tui-textfield>
+
+            <!-- <tui-textfield>
+                <label tuiLabel>Minimum age</label>
+                <input tuiInputNumber [formControl]="minAge" [tuiNumberFormat]="{precision: 0}" />
+            </tui-textfield> -->
+        </p>
+        <!-- <p class="filters">
+            <label tuiLabel>
+                <input tuiCheckbox type="checkbox" [(ngModel)]="dob" />
+                Enable sorting by DOB
+            </label>
+            <button size="m" tuiButton tuiChevron tuiDropdownOpen type="button" [tuiDropdown]="dropdown">
+                Columns
+            </button>
+            <ng-template #dropdown>
+                <tui-reorder class="columns" [enabled]="enabled" [(items)]="initial" (enabledChange)="onEnabled($event)" />
+            </ng-template>
+        </p> -->
+        <tui-loader [overlay]="true" [showLoader]="!!(loading$ | async)">
+            <!-- <p>
+                <b>Sort key:</b>
+                {{ sortKey$ | async }},
+                <b>direction:</b>
+                {{ direction$ | async }}
+            </p> -->
+
+            <table *ngIf="data$ | async as data" tuiTable class="table" [columns]="columns">
+                <thead>
+                    <tr tuiThGroup>
+                        <th *tuiHead="'name'" tuiTh>
+                            Name
+                        </th>
+                        <th *tuiHead="'path'" tuiTh>
+                            File path
+                        </th>
+                        <th *tuiHead="'upload'" tuiTh>
+                            Upload date
+                        </th>
+                    </tr>
+                </thead>
+                <tbody *tuiLet="data | tuiTableSort as sortedData" tuiTbody [data]="sortedData">
+                    <tr *ngFor="let item of sortedData" tuiTr>
+                        <td *tuiCell="'name'" tuiTd [class.match]="isMatch(item.name)">
+                            {{ item.name }}
+                        </td>
+                        <td *tuiCell="'path'" tuiTd [class.match]="isMatch(item.dob)">
+                            {{ item.file_path }}
+                        </td>
+                        <td *tuiCell="'upload'" tuiTd [class.match]="isMatch(item.age)">
+                            {{ item.upload_time }}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td [colSpan]="columns.length">
+                            <tui-table-pagination class="tui-space_top-2" [page]="(page$ | async) || 0"
+                                [total]="(total$ | async) || 0" (paginationChange)="onPagination($event)" />
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </tui-loader>
+    </div>
+    <div class="right-panel">
+        <div class="vl"></div>
+        <div class="subright">
+            <h2 tuiTitle="l">
+                {{visualization?.name}}
+                <span class="desc" tuiSubtitle>{{visualization?.description}}</span>
+            </h2>
+            <h4 tuiTitle="m">
+                Latest updates:
+            </h4>
+            <div tuiAppearance="floating" tuiCardLarge>
+                <section>
+                    @for (update of visualization?.last_updates; track $index) {
+                    <div class="cell" [tuiCell]="'s'">
+                        <div class="name" tuiTitle>{{update.name}}</div>
+                        <div class="value" tuiTitle>{{update.time}}</div>
+                    </div>
+                    }
+                </section>
+            </div>
+            <button iconEnd="@tui.chevron-right" size="l" class="see-more-btn" (click)="showUploadDialog(template)"
+                appearance="success" tuiButton type="button">
+                add new data
+            </button>
+        </div>
+
+
+    </div>
+</div>
+
+<ng-template #template let-observer>
+    <form [formGroup]="dialogForm" (ngSubmit)="submitUpload()">
+    <div class="dialog-body">
+        <div class="file-btn">
+            <label *ngIf="!control.value" tuiInputFiles>
+                <input accept=".csv" tuiInputFiles [formControl]="control" />
+            </label>
+            <tui-files class="tui-space_top-1">
+                <tui-file *ngIf="control.value | tuiFileRejected: {accept: '.csv'} | async as file" state="error"
+                    [file]="file" (remove)="removeFile()" />
+                <tui-file *ngIf="loadedFiles$ | async as file" [file]="file" (remove)="removeFile()" />
+                <tui-file *ngIf="failedFiles$ | async as file" state="error" [file]="file" (remove)="removeFile()" />
+                <tui-file *ngIf="loadingFiles$ | async as file" state="loading" [file]="file" (remove)="removeFile()" />
+            </tui-files>
+        </div>
+    </div>
+    <div class="dialog-footer">
+        <button size="m" tuiButton type="button" (click)="observer.complete()">
+            Cancel
+        </button>
+        <button size="m" tuiButton appearance="success" type="submit" [disabled]="!dialogForm.valid" (click)="submitUpload()">
+            Submit
+        </button>
+    </div>
+    </form>
+</ng-template>

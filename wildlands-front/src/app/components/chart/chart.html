@@ -14,23 +14,7 @@ tuiCardLarge
 
 <section>
     @if (appearance == 'History') {
-        <tui-axes
-        class="axes"
-        [horizontalLines]="2"
-        [verticalLines]="4"
-        [axisXLabels]="GetXAxisLabel()"
-        [axisYLabels]="GetYAxisLabel()"
-    >
-        <tui-line-chart
-            [filled]="true"
-            [height]="GetChartHeight()"
-            [smoothingFactor]="50"
-            [value]="value"
-            [width]="GetChartWidth()"
-            [x]="0"
-            [y]="0"
-        />
-    </tui-axes>
+       <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="'line'"> </canvas>
     }
     @else if (appearance == 'Forecast') {
 

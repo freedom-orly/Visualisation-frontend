@@ -1,42 +1,59 @@
 import { Component, Input } from '@angular/core';
-import {TuiAppearance, TuiTitle,} from '@taiga-ui/core';
-import {TuiCardLarge} from '@taiga-ui/layout';
-import {TuiAxes, TuiLineChart} from '@taiga-ui/addon-charts';
-import {type TuiPoint} from '@taiga-ui/core';
+import { TuiAppearance, TuiTitle, } from '@taiga-ui/core';
+import { TuiCardLarge } from '@taiga-ui/layout';
+import { TuiAxes, TuiLineChart } from '@taiga-ui/addon-charts';
+import { type TuiPoint } from '@taiga-ui/core';
 import { ChartDTO } from '../../models/chartDto';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartData, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-chart',
   imports: [TuiAppearance,
-    TuiCardLarge,TuiAxes, TuiLineChart,TuiTitle],
+    TuiCardLarge, TuiTitle, BaseChartDirective],
   templateUrl: './chart.html',
   styleUrl: './chart.less'
 })
 export class Chart {
-GetChartWidth(): number {
-  return this.data?.values.map(pair => pair[0]).reduce((a, b) => Math.max(a, b), 0) || 100;
-}
-GetChartHeight(): number {
-    return this.data?.values.map(pair => pair[1]).reduce((a, b) => Math.max(a, b), 0) || 100;
-}
-
   @Input() data: ChartDTO | null = null;
-  protected readonly value: readonly TuiPoint[] = [
-    [0, 10],
-    [2, 15],
-    [3, 13],
-    [4, 17],
-    [5, 14],
-    [6, 18],
-    [7, 16],
-    [8, 20],
-    [9, 19],
-    [10, 22]
+  protected chartData: ChartData<'line', { key: string, value: number }[]> = {
+    datasets: [{
+      data: this.GetValues(),
+      parsing: {
+        xAxisKey: 'key',
+        yAxisKey: 'value'
+      }
+    }],
+  };
+  protected chartOptions: ChartOptions = {
+    responsive: true,
+  }
 
-  ]
   protected readonly appearance: 'History' | 'Forecast' = this.GetAppearance();
   protected readonly title: string = this.data?.name || 'Sample Chart';
-  
+
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    this.chartData.datasets = [{
+      label: this.title,
+      data: this.GetValues(),
+      parsing: {
+        xAxisKey: 'key',
+        yAxisKey: 'value'
+      }
+    }];
+  }
+
+  GetChartWidth(): number {
+    return this.data?.values.map(pair => pair[0]).reduce((a, b) => Math.max(a, b), 0) || 100;
+  }
+  GetChartHeight(): number {
+    return Math.max(...this.data?.values.map(pair => pair[1])!)
+  }
+
+
+
   GetAppearance(): 'History' | 'Forecast' {
     if (this.data?.prediction) {
       return 'Forecast';
@@ -44,38 +61,34 @@ GetChartHeight(): number {
     return 'History';
   }
 
-  GetYAxisLabel(): string[] {
+  GetXAxisLabels(): string[] {
+    if (!this.data || !this.data.startDate || !this.data.spread || !this.data.endDate) {
+      return [];
+    }
+    const allDates: string[] = [];
+    const startTime = this.data.startDate.getTime();
+    const endTime = this.data.endDate.getTime();
+    const spreadInMs = this.data.spread * 1000;
+    for (let time = startTime; time <= endTime; time += spreadInMs) {
+      const date = new Date(time);
+      allDates.push(`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
+    }
+
+    return allDates;
+  }
+  GetValues(): { key: string, value: number }[] {
     if (!this.data || !this.data.values) {
       return [];
     }
 
-    const yValues = this.data.values.flat();
-    const uniqueYValues = Array.from(new Set(yValues));
-
-    uniqueYValues.sort((a, b) => a - b);
-
-    return uniqueYValues.map(String);
-  }
-
-  GetXAxisLabel(): string[] {
-    if (!this.data || !this.data.values || !this.data.spread) {
-      return [];
-    }
-
-    const startDate = new Date(); // Assuming the chart starts from the current date
-    const spreadInMs = this.data.spread * 1000; // Convert spread from seconds to milliseconds
-
-    return this.data.values.map((_, index) => {
-      const labelDate = new Date(startDate.getTime() + index * spreadInMs);
-      return labelDate.toDateString(); // Format as ISO string
+    var chartData: { key: string, value: number }[] = [];
+    const xLabels = this.GetXAxisLabels();
+    this.data.values.forEach(pair => {
+      const xIndex = pair[0];
+      const yValue = pair[1];
+      chartData.push({ key: xLabels[xIndex], value: yValue });
     });
-  }
-  GetValues(): TuiPoint[] {
-    if (!this.data || !this.data.values) {
-      return [];
-    }
-    
-    return this.data.values.map(pair => [pair[0], pair[1]] as TuiPoint);
+    return chartData;
   }
 }
 

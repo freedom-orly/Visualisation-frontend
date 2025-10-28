@@ -2,7 +2,7 @@ import {KeyValuePipe, NgForOf, NgIf} from '@angular/common';
 import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {tuiAsPortal, TuiPortals, TuiRepeatTimes} from '@taiga-ui/cdk';
+import {tuiAsPortal, TuiPortals, TuiRepeatTimes,} from '@taiga-ui/cdk';
 import {
     TuiAppearance,
     TuiButton,
@@ -64,7 +64,8 @@ const ICON =
         TuiSwitch,
         TuiTabs,
         TuiTextfield,
-        TuiTitle,],
+        TuiTitle,
+],
   templateUrl: './app.html',
   styleUrl: './app.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +73,7 @@ const ICON =
   providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
 })
 export class App {
+
   protected readonly title = signal('wildlands-front');
   protected expanded = signal(false);
   protected open = false;
@@ -92,5 +94,9 @@ export class App {
  
     protected handleToggle(): void {
         this.expanded.update((e) => !e);
+    }
+
+    darkMode() {
+    return 'dark';
     }
 }

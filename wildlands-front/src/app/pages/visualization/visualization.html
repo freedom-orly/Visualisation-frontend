@@ -1,1 +1,40 @@
-<p>visualization works!</p>
+<tui-breadcrumbs [size]="'l'">
+    @for (item of breadcrumbsItems; track $index) {
+    <a *tuiItem tuiLink [routerLink]="item.routerLink">{{item.caption}}</a>
+    }
+</tui-breadcrumbs>
+<hr>
+<div class="split">
+    <div class="left-panel">
+        @for (vis of visualizations; track $index) {
+            <app-link-button (click)="changeVisualization(vis)" (hover)="changeVisualization(vis)" [icon]="vis.is_prediction ? '@tui.help-circle' : '@tui.clock'" [label]="vis.name" [link]="'' + vis.id"></app-link-button>
+        }
+    </div>
+    <div class="right-panel">
+        <div class="vl"></div>
+        <div class="subright">
+            <h2 tuiTitle="l">
+                {{current?.name}}
+                <span class="desc" tuiSubtitle>{{current?.description}}</span>
+            </h2>
+            <h4 tuiTitle="m">
+                Latest updates:
+            </h4>
+            <div tuiAppearance="floating" tuiCardLarge>
+                <section>
+                    @for (update of current?.last_updates; track $index) {
+                        <div class="cell" [tuiCell]="'s'">
+                        <div class="name" tuiTitle>{{update.name}}</div>
+                        <div class="value" tuiTitle>{{update.time}}</div>
+                    </div>
+                    }
+                </section>
+            </div>
+            <button iconEnd="@tui.chevron-right" size="l" class="see-more-btn" [routerLink]="''+current?.id" tuiButton type="button">
+                See more
+            </button>
+        </div>
+
+
+    </div>
+</div>

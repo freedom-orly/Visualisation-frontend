@@ -13,6 +13,7 @@ import { VisualizationDTO } from './models/VisualizationDTO';
   providedIn: 'root'
 })
 export class HttpService {
+
   private readonly apiUrl = 'http://localhost:5000/api';
   constructor(private http: HttpClient) {
     
@@ -32,8 +33,13 @@ export class HttpService {
     return this.http.post<FileUploadResponse>(`${this.apiUrl}/upload/rscript`, formData);
   }
 
+  // TODO: fix naming
   searchFiles(req: FileQuery): Observable<FileDTO[]> {
-    return this.http.post<FileDTO[]>(`${this.apiUrl}/files/search`, req);
+    return this.http.post<FileDTO[]>(`${this.apiUrl}/data/search`, req);
+  }
+
+  searchRScripts(req: FileQuery): Observable<FileDTO[]> {
+    return this.http.post<FileDTO[]>(`${this.apiUrl}/rscripts/search`, req);
   }
 
   getAllFiles(): Observable<FileDTO[]> {

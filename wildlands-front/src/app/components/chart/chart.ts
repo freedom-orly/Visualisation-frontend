@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TuiAppearance, TuiTitle, } from '@taiga-ui/core';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { TuiAxes, TuiLineChart } from '@taiga-ui/addon-charts';
@@ -6,16 +6,19 @@ import { type TuiPoint } from '@taiga-ui/core';
 import { ChartDTO } from '../../models/chartDto';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-chart',
   imports: [TuiAppearance,
     TuiCardLarge, TuiTitle, BaseChartDirective],
   templateUrl: './chart.html',
-  styleUrl: './chart.less'
+  styleUrl: './chart.less',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Chart {
   @Input() data: ChartDTO | null = null;
+  @Input() dataAsync: Observable<ChartDTO> | null = null; 
   protected chartData: ChartData<'line', { key: string, value: number }[]> = {
     datasets: [{
       data: this.GetValues(),
@@ -30,7 +33,22 @@ export class Chart {
   }
 
   protected readonly appearance: 'History' | 'Forecast' = this.GetAppearance();
-  protected readonly title: string = this.data?.name || 'Sample Chart';
+  protected title: string = this.data?.name || 'Sample Chart';
+
+  constructor() { 
+    this.dataAsync?.subscribe(data => {
+      this.title = data.name;
+      this.data = data;
+      this.chartData.datasets = [{
+        label: this.title,
+        data: this.GetValues(),
+        parsing: {
+          xAxisKey: 'key',
+          yAxisKey: 'value'
+        }
+      }];
+    });
+  }
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -62,13 +80,13 @@ export class Chart {
   }
 
   GetXAxisLabels(): string[] {
-    if (!this.data || !this.data.startDate || !this.data.spread || !this.data.endDate) {
+    if (!this.data || !this.data.start_date || !this.data.spread || !this.data.end_date) {
       return [];
     }
     const allDates: string[] = [];
-    const startTime = this.data.startDate.getTime();
-    const endTime = this.data.endDate.getTime();
-    const spreadInMs = this.data.spread * 1000;
+    const startTime = this.data.start_date.getTime();
+    const endTime = this.data.end_date.getTime();
+    const spreadInMs = this.data.spread;
     for (let time = startTime; time <= endTime; time += spreadInMs) {
       const date = new Date(time);
       allDates.push(`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);

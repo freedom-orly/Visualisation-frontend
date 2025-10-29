@@ -49,6 +49,6 @@ export class Dashboard {
     [29, 44],
     [30, 48]
     ],
-    86400 // Spread of 1 day in seconds
+    86400000 // Spread of 1 day in seconds
   );
 }

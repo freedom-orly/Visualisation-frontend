@@ -1,8 +1,8 @@
 export class ChartDTO {
-  visualizationId: number;
+  visualization_id: number;
   name: string;
-  startDate: Date;
-  endDate: Date;
+  start_date: Date;
+  end_date: Date;
   prediction: boolean;
   values: number[][];
   spread?: number; // Representing timedelta in seconds
@@ -16,10 +16,10 @@ export class ChartDTO {
     values: number[][],
     spread: number | undefined
   ) {
-    this.visualizationId = visualizationId;
+    this.visualization_id = visualizationId;
     this.name = name;
-    this.startDate = startDate;
-    this.endDate = endDate;
+    this.start_date = startDate;
+    this.end_date = endDate;
     this.prediction = prediction;
     this.values = values;
     this.spread = spread;

@@ -53,8 +53,6 @@ export class Visualization {
 
   changeVisualization(vis: VisualizationDTO) {
     this.current = vis;
-    
-    
   }
 
 

@@ -1,6 +1,6 @@
 export interface ChartQuery {
     id: number;
-    startDate: string; 
-    endDate: string;   
+    start_date: string; 
+    end_date: string;   
     spread: string;   // ISO 8601 duration, optional
 }

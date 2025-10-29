@@ -54,6 +54,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpService } from '../../http-service';
 import { TuiCell } from '@taiga-ui/layout';
 import { FileDTO } from '../../models/FileDTO';
+import e from 'express';
 
 
 const TODAY = TuiDay.currentLocal();
@@ -116,6 +117,7 @@ export class UploadDetails {
       routerLink: ''
     }
   ];
+  protected fileType: 'rscript' | 'datafile' = 'datafile';
   protected visualization: VisualizationDTO | null = null;
   protected filesPage: FilePage | null = null;
   protected selected = [];
@@ -148,7 +150,13 @@ export class UploadDetails {
   ]).pipe(
     // zero time debounce for a case when both key and direction change
     debounceTime(0),
-    switchMap((query) => this.getFilesData(...query).pipe(startWith(null))),
+    switchMap((query) => {
+      if (this.fileType === 'datafile') {
+        return this.getFilesData(...query);
+      } else {
+        return this.getRScriptFilesData(...query);
+      }
+    }),
     share(),
   );
 
@@ -167,6 +175,16 @@ export class UploadDetails {
   );
 
   constructor(private HttpService: HttpService, private route: ActivatedRoute, private tuiDialog: TuiDialogService) {
+    this.route.pathFromRoot[1].url.subscribe(urlSegment => {
+      if (urlSegment.length > 0) {
+        if (urlSegment.at(-2)!.path === 'rscript') {
+          this.fileType = 'rscript';
+        } else {
+          this.fileType = 'datafile';
+        }
+        this.breadcrumbsItems[2].caption = this.fileType === 'datafile' ? 'Data Files' : 'R Scripts';
+      }
+    });
 
   }
 
@@ -234,17 +252,43 @@ export class UploadDetails {
     })
   }
 
+  private getRScriptFilesData(
+    page: number,
+    size: number,
+  ): Observable<ReadonlyArray<FileDTO | null>> {
+    const start = page * size;
+    const end = start + size;
+    return this.HttpService.searchRScripts({
+      extension: this.search,
+      visualization_id: Number(this.route.snapshot.paramMap.get('id')),
+      start: 1,
+      query: ''
+    })
+  }
+
   submitUpload() {
     const file = this.control.value;
     if (file) {
-      this.HttpService.uploadDataFile(
-        {
-          file: file,
-          visualizationId: Number(this.route.snapshot.paramMap.get('id'))
-        }
-      ).subscribe(() => {
-        this.control.setValue(null);
-      });
+      if (this.fileType === 'rscript') {
+        this.HttpService.uploadRscriptFile(
+          {
+            file: file,
+            visualizationId: Number(this.route.snapshot.paramMap.get('id'))
+          }
+        ).subscribe(() => {
+          this.control.setValue(null);
+        });
+      }
+      else {
+        this.HttpService.uploadDataFile(
+          {
+            file: file,
+            visualizationId: Number(this.route.snapshot.paramMap.get('id'))
+          }
+        ).subscribe(() => {
+          this.control.setValue(null);
+        });
+      }
     }
   }
 

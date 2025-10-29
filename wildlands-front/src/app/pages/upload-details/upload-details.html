@@ -97,7 +97,7 @@
             </div>
             <button iconEnd="@tui.chevron-right" size="l" class="see-more-btn" (click)="showUploadDialog(template)"
                 appearance="success" tuiButton type="button">
-                add new data
+                {{ fileType === 'datafile' ? 'Upload Data File' : 'Upload R Script' }}
             </button>
         </div>
 
@@ -110,10 +110,10 @@
     <div class="dialog-body">
         <div class="file-btn">
             <label *ngIf="!control.value" tuiInputFiles>
-                <input accept=".csv" tuiInputFiles [formControl]="control" />
+                <input [accept]="fileType == 'datafile' ? '.csv' : '.r'" tuiInputFiles [formControl]="control" />
             </label>
             <tui-files class="tui-space_top-1">
-                <tui-file *ngIf="control.value | tuiFileRejected: {accept: '.csv'} | async as file" state="error"
+                <tui-file *ngIf="control.value | tuiFileRejected: {accept: fileType == 'datafile' ? '.csv' : '.r'} | async as file" state="error"
                     [file]="file" (remove)="removeFile()" />
                 <tui-file *ngIf="loadedFiles$ | async as file" [file]="file" (remove)="removeFile()" />
                 <tui-file *ngIf="failedFiles$ | async as file" state="error" [file]="file" (remove)="removeFile()" />

@@ -1,1 +1,66 @@
-<p>visualization-details works!</p>
+<tui-breadcrumbs [size]="'l'">
+    @for (item of breadcrumbsItems; track $index) {
+    <a *tuiItem tuiLink [routerLink]="item.routerLink">{{item.caption}}</a>
+    }
+</tui-breadcrumbs>
+<hr>
+<div class="split">
+    <div class="left-panel">
+        <ng-container *ngIf="chartData$ | async as data; else loading">
+            <!-- use 'data' safely here -->
+           <app-chart [data]="data"></app-chart>
+        </ng-container>
+        
+        <ng-template #loading>
+            <div class="spinner">Loading…</div>
+        </ng-template>
+        
+    </div>
+    <div class="right-panel">
+        <div class="subright">
+            <div tuiAppearance="floating" tuiCardLarge>
+                <section>
+                    <div class="dates">
+                    <tui-textfield>
+                        <label tuiLabel>Choose a date</label>
+                        <input tuiInputDate [(ngModel)]="startDate" />
+                        <tui-calendar *tuiTextfieldDropdown />
+                    </tui-textfield>
+                    <tui-textfield>
+                        <label tuiLabel>Choose a date</label>
+                        <input tuiInputDate [(ngModel)]="endDate" />
+                        <tui-calendar *tuiTextfieldDropdown />
+                    </tui-textfield>
+                    </div>
+                    <div class="spread">
+                        	<tui-textfield tuiChevron>
+    <input
+        tuiSelect
+        [(ngModel)]="spread"
+    />
+ 
+    <tui-data-list-wrapper
+        *tuiTextfieldDropdown
+        new
+        [items]="spreadOptions"
+    />
+</tui-textfield>
+                    </div>
+
+                </section>
+                <footer>
+                    <button appearance="secondary" size="m" tuiButton type="button">
+                        Label
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="export-btn">
+    <app-link-button [icon]="'@tui.download'" [label]="'Export this data'"
+        [link]="'/export-visualization'"></app-link-button>
+</div>

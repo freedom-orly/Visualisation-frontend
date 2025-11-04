@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { TuiAppearance, TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiTile } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
+import { TuiHovered } from "@taiga-ui/cdk";
 
 @Component({
   selector: 'app-link-button',
-  imports: [TuiCardLarge, TuiTile, TuiIcon, TuiAppearance, TuiHeader, RouterLink, TuiButton],
+  imports: [TuiCardLarge, TuiTile, TuiIcon, TuiAppearance, TuiHeader, RouterLink, TuiButton, TuiHovered],
   templateUrl: './link-button.html',
   styleUrl: './link-button.less'
 })

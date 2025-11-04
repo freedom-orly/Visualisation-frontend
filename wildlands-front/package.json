@@ -43,6 +43,7 @@
     "@taiga-ui/icons": "^4.57.0",
     "@taiga-ui/kit": "^4.57.0",
     "@taiga-ui/layout": "^4.57.0",
+    "@taiga-ui/styles": "^4.60.0",
     "chart.js": "^4.5.1",
     "express": "^5.1.0",
     "ng2-charts": "^8.0.0",

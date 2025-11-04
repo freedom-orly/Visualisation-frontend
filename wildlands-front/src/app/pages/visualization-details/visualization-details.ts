@@ -3,15 +3,15 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiDay, TuiItem } from '@taiga-ui/cdk';
-import { TuiButton, TuiFormatNumberPipe, TuiLink, TuiTitle, TuiTextfieldComponent, TuiCalendar, TuiTextfield } from '@taiga-ui/core';
+import { TuiButton, TuiFormatNumberPipe, TuiLink, TuiTitle, TuiTextfieldComponent, TuiCalendar, TuiTextfield, TuiLoader, TuiIcon, TuiAppearance } from '@taiga-ui/core';
 import { TuiAccordionDirective, TuiAccordionItem, TuiBreadcrumbs, TuiDataListWrapperComponent, TuiInputDate, TuiSelect } from '@taiga-ui/kit/components';
 import { TuiCardLarge, TuiCell, TuiHeader, TuiSubheaderComponent } from '@taiga-ui/layout';
 import { LinkButton } from '../../components/link-button/link-button';
 import { Chart } from "../../components/chart/chart";
 import { ChartDTO } from '../../models/chartDto';
 import { HttpService } from '../../http-service';
-import { FormsModule } from '@angular/forms';
-import { combineLatest, last, map, Observable, Subject } from 'rxjs';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, combineLatest, last, map, Observable, of, Subject } from 'rxjs';
 import { response } from 'express';
 
 @Component({
@@ -43,20 +43,29 @@ import { response } from 'express';
     TuiSelect,
     TuiTextfield,
     TuiInputDate,
-    NgIf
-  ],
+    NgIf, TuiLoader, TuiIcon, TuiAppearance, ReactiveFormsModule],
   templateUrl: './visualization-details.html',
   styleUrl: './visualization-details.less'
 })
 export class VisualizationDetails {
-  chartData$: Observable<ChartDTO>;
-  value: any;
+  chartData$: Observable<ChartDTO> | null = null;
   spreadOptions: readonly string[] = ['1 day', '1 week', '1 month'];
   startDate: TuiDay | null = new TuiDay(2025, 0, 1);
   endDate: TuiDay | null = new TuiDay(2025, 0, 31);
   spread: '1 day' | '1 week' | '1 month' = '1 day';
+  reqFrom: FormGroup = new FormGroup({
+    startDate: new FormControl(new TuiDay(2025, 0, 1), Validators.required),
+    endDate: new FormControl(new TuiDay(2025, 0, 31), Validators.required),
+    spread: new FormControl('1 day', Validators.required)
+  })
+  error: boolean = false;
 
   constructor(private route: ActivatedRoute, private http: HttpService) {
+  
+  }
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
     const id = parseInt(this.route.snapshot.paramMap.get('id') ?? '');
     this.chartData$ = this.http.getChart(
       {
@@ -75,14 +84,12 @@ export class VisualizationDetails {
             response.prediction,
             response.values,
             parseInt(response.spread as unknown as string) 
-          );
-      })
+          );}),
+        catchError(e => {
+          this.error = true;
+          return of({} as ChartDTO)
+        })
     );
-  }
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-
   }
 
   readonly breadcrumbsItems = [
@@ -109,5 +116,17 @@ export class VisualizationDetails {
       case '1 month':
         return 1000 * 60 * 60 * 24 * 30;
     }
+  }
+
+  UpdateChart() {
+    const id = parseInt(this.route.snapshot.paramMap.get('id') ?? '');
+    this.chartData$ = this.http.getChart(
+      {
+        end_date: this.reqFrom.value['endDate'],
+        id: id,
+        spread: this.getSpread(this.reqFrom.value['spread']).toString(),
+        start_date: this.reqFrom.value['startDate']
+      }      
+    )
   }
 }

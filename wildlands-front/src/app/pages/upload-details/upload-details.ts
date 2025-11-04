@@ -1,4 +1,4 @@
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -20,18 +20,9 @@ import {
   TuiLet,
   tuiToInt,
 } from '@taiga-ui/cdk';
-import {
-  TuiButton,
-  TuiDialogContext,
-  TuiDialogService,
-  TuiDropdown,
-  TuiLabel,
-  TuiLoader,
-  TuiNumberFormat,
-  TuiTextfield,
-} from '@taiga-ui/core';
-import { TuiCheckbox, TuiChevron, TuiInputNumber, TuiBreadcrumbs, TuiAvatar, TuiFileLike, TuiFiles } from '@taiga-ui/kit';
-import { type PolymorpheusContent } from '@taiga-ui/polymorpheus';
+import { TuiAlertService, TuiButton, TuiDialogContext, TuiDialogService, TuiDropdown, TuiLabel, TuiLoader, TuiNumberFormat, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { TuiCheckbox, TuiChevron, TuiInputNumber, TuiBreadcrumbs, TuiAvatar, TuiFileLike, TuiFiles, TuiTile } from '@taiga-ui/kit';
+import { PolymorpheusComponent, PolymorpheusTemplate, type PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import {
   BehaviorSubject,
   combineLatest,
@@ -52,7 +43,7 @@ import { VisualizationDTO } from '../../models/VisualizationDTO';
 import { FilePage } from '../../models/FilePage';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpService } from '../../http-service';
-import { TuiCell } from '@taiga-ui/layout';
+import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { FileDTO } from '../../models/FileDTO';
 import e from 'express';
 
@@ -95,8 +86,12 @@ function sortBy(key: keyof FileDTO, direction: TuiSortDirection): TuiComparator<
     RouterLink,
     TuiCell,
     TuiAvatar,
-    TuiFiles
-  ],
+    TuiFiles,
+    DatePipe,
+    TuiCardLarge,
+    TuiTitle,
+    PolymorpheusTemplate
+],
   templateUrl: './upload-details.html',
   styleUrl: './upload-details.less'
 })
@@ -168,24 +163,14 @@ export class UploadDetails {
     startWith(1),
   );
 
-  protected readonly data$: Observable<readonly FileDTO[]> = this.request$.pipe(
-    filter(tuiIsPresent),
-    map((users) => users.filter(tuiIsPresent)),
-    startWith([]),
-  );
+  data$: Observable<FileDTO[]> | null = null;
+  // protected readonly data$: Observable<readonly FileDTO[]> = this.request$.pipe(
+  //   filter(tuiIsPresent),
+  //   map((users) => users.filter(tuiIsPresent)),
+  //   startWith([]),
+  // );
 
-  constructor(private HttpService: HttpService, private route: ActivatedRoute, private tuiDialog: TuiDialogService) {
-    this.route.pathFromRoot[1].url.subscribe(urlSegment => {
-      if (urlSegment.length > 0) {
-        if (urlSegment.at(-2)!.path === 'rscript') {
-          this.fileType = 'rscript';
-        } else {
-          this.fileType = 'datafile';
-        }
-        this.breadcrumbsItems[2].caption = this.fileType === 'datafile' ? 'Data Files' : 'R Scripts';
-      }
-    });
-
+  constructor(private HttpService: HttpService, private route: ActivatedRoute, private tuiDialog: TuiDialogService, private tuiAlert: TuiAlertService) {
   }
 
   ngOnInit(): void {
@@ -195,6 +180,19 @@ export class UploadDetails {
     this.HttpService.getVisualizationById(visualizationId).subscribe((data) => {
       this.visualization = data;
     });
+    this.route.pathFromRoot[1].url.subscribe(urlSegment => {
+      if (urlSegment.length > 0) {
+        if (urlSegment.at(-2)!.path === 'rscript') {
+          this.fileType = 'rscript';
+          this.data$ = this.getRScriptFilesData(0, 10)
+        } else {
+          this.fileType = 'datafile';
+          this.data$ = this.getFilesData(0, 10)
+        }
+        this.breadcrumbsItems[2].caption = this.fileType === 'datafile' ? 'Data Files' : 'R Scripts';
+      }
+    });
+
   }
 
   showUploadDialog(content: PolymorpheusContent<TuiDialogContext>) {
@@ -225,13 +223,7 @@ export class UploadDetails {
 
     return timer(1000).pipe(
       map(() => {
-        if (Math.random() > 0.5) {
-          return file;
-        }
-
-        this.failedFiles$.next(file);
-
-        return null;
+        return file;
       }),
       finalize(() => this.loadingFiles$.next(null)),
     );
@@ -240,7 +232,7 @@ export class UploadDetails {
   private getFilesData(
     page: number,
     size: number,
-  ): Observable<ReadonlyArray<FileDTO | null>> {
+  ): Observable<FileDTO[]> {
 
     const start = page * size;
     const end = start + size;
@@ -255,7 +247,7 @@ export class UploadDetails {
   private getRScriptFilesData(
     page: number,
     size: number,
-  ): Observable<ReadonlyArray<FileDTO | null>> {
+  ): Observable<FileDTO[]> {
     const start = page * size;
     const end = start + size;
     return this.HttpService.searchRScripts({
@@ -275,9 +267,20 @@ export class UploadDetails {
             file: file,
             visualizationId: Number(this.route.snapshot.paramMap.get('id'))
           }
-        ).subscribe(() => {
-          this.control.setValue(null);
-        });
+        ).subscribe(
+          {
+            error: () =>{
+              this.tuiAlert.open('Unfortunetly we couldn\'t upload this file.', {label: 'Something went wrong', appearance: 'negative'})
+            .subscribe();
+            this.control.setValue(null);
+            },
+            complete: () => {
+              this.tuiAlert.open('This file has been successfully uploaded!', {label: 'Success!', appearance: 'positive'})
+            .subscribe();
+            this.control.setValue(null);
+            }
+          }
+        );
       }
       else {
         this.HttpService.uploadDataFile(
@@ -285,9 +288,20 @@ export class UploadDetails {
             file: file,
             visualizationId: Number(this.route.snapshot.paramMap.get('id'))
           }
-        ).subscribe(() => {
-          this.control.setValue(null);
-        });
+        ).subscribe({
+                      error: () =>{
+              this.tuiAlert.open('Unfortunetly we couldn\'t upload this file.', {label: 'Something went wrong', appearance: 'negative'})
+            .subscribe();
+            this.control.setValue(null);
+            },
+            complete: () => {
+              this.tuiAlert.open('This file has been successfully uploaded!', {label: 'Success!', appearance: 'positive'})
+            .subscribe();
+            this.control.setValue(null);
+            }
+            
+          }
+        );
       }
     }
   }

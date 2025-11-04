@@ -1,3 +1,8 @@
+:host {
+    display: grid;
+}
+
+
 
 .split {
     display: flex;
@@ -6,7 +11,11 @@
     gap: 1rem;
     margin-top: 20px;
     .left-panel {
-        width: 75%
+        width: 75%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: wrap;
     }
 
     .right-panel {

@@ -1,4 +1,4 @@
-<div tuiAppearance="floating" tuiSurface="floating" tuiCardLarge class="link-button-card">
+<div tuiAppearance="floating" (tuiHoveredChange)="onHover()" tuiSurface="floating" tuiCardLarge class="link-button-card">
 
     <section class="btn-body" (tuiHover)="onHover()" (click)="onClick()">
         <tui-icon [icon]="icon" [style.font-size.rem]="2.5" />

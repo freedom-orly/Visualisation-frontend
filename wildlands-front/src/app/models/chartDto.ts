@@ -4,7 +4,7 @@ export class ChartDTO {
   start_date: Date;
   end_date: Date;
   prediction: boolean;
-  values: number[][];
+  values: chartEntry[]
   spread?: number; // Representing timedelta in seconds
 
   constructor(
@@ -13,7 +13,7 @@ export class ChartDTO {
     startDate: Date,
     endDate: Date,
     prediction: boolean,
-    values: number[][],
+    values: chartEntry[],
     spread: number | undefined
   ) {
     this.visualization_id = visualizationId;
@@ -25,3 +25,8 @@ export class ChartDTO {
     this.spread = spread;
   }
 }
+
+export interface chartEntry {
+  name: string,
+  values: number[][]
+} 

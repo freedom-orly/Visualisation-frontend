@@ -6,54 +6,51 @@
 <hr>
 <div class="split">
     <div class="left-panel">
-        <ng-container *ngIf="chartData$ | async as data; else loading">
-            <!-- use 'data' safely here -->
-           <app-chart [data]="data"></app-chart>
-        </ng-container>
-        
-        <ng-template #loading>
-            <div class="spinner">Loading…</div>
-        </ng-template>
-        
+
+        @if (chartData$ | async; as data ) {
+        @if (!this.error) {
+        <app-chart [data]="data"></app-chart>
+        }
+        @else {
+        <tui-icon [style.color]="'var(--tui-text-negative)'" icon="@tui.circle-x"></tui-icon>
+        }
+        }
+        @else {
+        <tui-loader></tui-loader>
+        }
+
     </div>
     <div class="right-panel">
         <div class="subright">
-            <div tuiAppearance="floating" tuiCardLarge>
+            <form [formGroup]="reqFrom" (ngSubmit)="UpdateChart()" tuiAppearance="floating" tuiCardLarge>
                 <section>
                     <div class="dates">
-                    <tui-textfield>
-                        <label tuiLabel>Choose a date</label>
-                        <input tuiInputDate [(ngModel)]="startDate" />
-                        <tui-calendar *tuiTextfieldDropdown />
-                    </tui-textfield>
-                    <tui-textfield>
-                        <label tuiLabel>Choose a date</label>
-                        <input tuiInputDate [(ngModel)]="endDate" />
-                        <tui-calendar *tuiTextfieldDropdown />
-                    </tui-textfield>
+                        <tui-textfield class="tui-space_top-2">
+                            <label tuiLabel>Choose a date</label>
+                            <input tuiInputDate formControlName="startDate" />
+                            <tui-calendar *tuiTextfieldDropdown />
+                        </tui-textfield>
+                        <tui-textfield class="tui-space_top-5">
+                            <label tuiLabel>Choose a date</label>
+                            <input tuiInputDate formControlName="endDate" />
+                            <tui-calendar *tuiTextfieldDropdown />
+                        </tui-textfield>
                     </div>
-                    <div class="spread">
-                        	<tui-textfield tuiChevron>
-    <input
-        tuiSelect
-        [(ngModel)]="spread"
-    />
- 
-    <tui-data-list-wrapper
-        *tuiTextfieldDropdown
-        new
-        [items]="spreadOptions"
-    />
-</tui-textfield>
+                    <div class="spread tui-space_top-5">
+                        <tui-textfield tuiChevron>
+                            <input tuiSelect formControlName="spread" />
+
+                            <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="spreadOptions" />
+                        </tui-textfield>
                     </div>
 
                 </section>
                 <footer>
-                    <button appearance="secondary" size="m" tuiButton type="button">
-                        Label
+                    <button appearance="success" size="m" [disabled]="!reqFrom.valid" tuiButton type="submit">
+                        Update
                     </button>
                 </footer>
-            </div>
+            </form>
         </div>
 
 

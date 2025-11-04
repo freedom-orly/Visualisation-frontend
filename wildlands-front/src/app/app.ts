@@ -70,7 +70,6 @@ const ICON =
   styleUrl: './app.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
     // Ignore portal related code, it is only here to position drawer inside the example block
-  providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
 })
 export class App {
 

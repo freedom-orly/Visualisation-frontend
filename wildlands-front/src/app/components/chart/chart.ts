@@ -21,7 +21,7 @@ export class Chart {
   @Input() dataAsync: Observable<ChartDTO> | null = null; 
   protected chartData: ChartData<'line', { key: string, value: number }[]> = {
     datasets: [{
-      data: this.GetValues(),
+      data: [],
       parsing: {
         xAxisKey: 'key',
         yAxisKey: 'value'
@@ -36,39 +36,32 @@ export class Chart {
   protected title: string = this.data?.name || 'Sample Chart';
 
   constructor() { 
-    this.dataAsync?.subscribe(data => {
-      this.title = data.name;
-      this.data = data;
-      this.chartData.datasets = [{
-        label: this.title,
-        data: this.GetValues(),
-        parsing: {
-          xAxisKey: 'key',
-          yAxisKey: 'value'
-        }
-      }];
-    });
+
   }
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
-    this.chartData.datasets = [{
-      label: this.title,
-      data: this.GetValues(),
-      parsing: {
-        xAxisKey: 'key',
-        yAxisKey: 'value'
-      }
-    }];
+    this.title = this.data!.name;
+      this.data = this.data;
+      this.chartData.datasets = this.data!.values.map(v => {
+        return {
+          label: v.name,
+          parsing: {
+            xAxisKey: 'key',
+            yAxisKey: 'value'
+          },
+          data: this.GetValues(v.values)
+        }
+      })
   }
 
-  GetChartWidth(): number {
-    return this.data?.values.map(pair => pair[0]).reduce((a, b) => Math.max(a, b), 0) || 100;
-  }
-  GetChartHeight(): number {
-    return Math.max(...this.data?.values.map(pair => pair[1])!)
-  }
+  // GetChartWidth(): number {
+  //   return this.data?.values.map(pair => pair[0]).reduce((a, b) => Math.max(a, b), 0) || 100;
+  // }
+  // GetChartHeight(): number {
+  //   return Math.max(...this.data?.values.map(pair => pair[1])!)
+  // }
 
 
 
@@ -94,14 +87,14 @@ export class Chart {
 
     return allDates;
   }
-  GetValues(): { key: string, value: number }[] {
+  GetValues(vals: number[][]): { key: string, value: number }[] {
     if (!this.data || !this.data.values) {
       return [];
     }
 
     var chartData: { key: string, value: number }[] = [];
     const xLabels = this.GetXAxisLabels();
-    this.data.values.forEach(pair => {
+    vals.forEach(pair => {
       const xIndex = pair[0];
       const yValue = pair[1];
       chartData.push({ key: xLabels[xIndex], value: yValue });

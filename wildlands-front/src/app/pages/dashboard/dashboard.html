@@ -1,9 +1,15 @@
-<h1 tuiTitle="l">Welcome back!</h1>
-
-<div class="charts">
-    <app-chart [data]="chartData"></app-chart>
-    <app-chart [data]="chartData"></app-chart>
+<div class="headline tui-space_top-6">
+    <h1 tuiTitle="l">Welcome back!</h1>
 </div>
 
 
+<div class="charts tui-space_top-10">
+    <app-chart class="chart" [data]="chartData"></app-chart>
+    <app-chart class="chart" [data]="chartData"></app-chart>
+</div>
 
+<div class="buttons tui-space_top-6">
+    <app-link-button class="btn" [icon]="'@tui.upload'" [label]="'Data upload'" [link]="'upload'"></app-link-button>
+     <app-link-button class="btn" [icon]="'@tui.file'" [label]="'Data view'" [link]="'upload'"></app-link-button>
+      <app-link-button class="btn" [icon]="'@tui.settings'" [label]="'Settings'" [link]="'settings'"></app-link-button>
+</div>

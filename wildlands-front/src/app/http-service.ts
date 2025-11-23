@@ -55,6 +55,8 @@ export class HttpService {
   }
 
   getChart(req: ChartQuery): Observable<ChartDTO> {
+    req.start_date = new Date(req.start_date, ).toISOString().split('T')[0];
+    req.end_date = new Date(req.end_date).toISOString().split('T')[0];
     return this.http.post<ChartDTO>(`${this.apiUrl}/visualizations/chart`, req);
   }
   

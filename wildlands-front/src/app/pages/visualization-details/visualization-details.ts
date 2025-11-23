@@ -50,12 +50,12 @@ import { response } from 'express';
 export class VisualizationDetails {
   chartData$: Observable<ChartDTO> | null = null;
   spreadOptions: readonly string[] = ['1 day', '1 week', '1 month'];
-  startDate: TuiDay | null = new TuiDay(2025, 0, 1);
-  endDate: TuiDay | null = new TuiDay(2025, 0, 31);
+  startDate: TuiDay | null = new TuiDay(2025, 10, 1);
+  endDate: TuiDay | null = new TuiDay(2025, 10, 30);
   spread: '1 day' | '1 week' | '1 month' = '1 day';
   reqFrom: FormGroup = new FormGroup({
-    startDate: new FormControl(new TuiDay(2025, 0, 1), Validators.required),
-    endDate: new FormControl(new TuiDay(2025, 0, 31), Validators.required),
+    startDate: new FormControl(new TuiDay(2025, 10, 1), Validators.required),
+    endDate: new FormControl(new TuiDay(2025, 10, 30), Validators.required),
     spread: new FormControl('1 day', Validators.required)
   })
   error: boolean = false;
@@ -70,8 +70,8 @@ export class VisualizationDetails {
     this.chartData$ = this.http.getChart(
       {
         id: id,
-        start_date: this.startDate!.toString(),
-        end_date: this.endDate!.toString(),
+        start_date: this.startDate!.toString('YMD', '-'),
+        end_date: this.endDate!.toString('YMD', '-'),
         spread: this.getSpread(this.spread).toString()
       }
     ).pipe(
@@ -122,10 +122,10 @@ export class VisualizationDetails {
     const id = parseInt(this.route.snapshot.paramMap.get('id') ?? '');
     this.chartData$ = this.http.getChart(
       {
-        end_date: this.reqFrom.value['endDate'],
+        end_date: this.reqFrom.value['endDate'].toString('YMD', '-'),
         id: id,
         spread: this.getSpread(this.reqFrom.value['spread']).toString(),
-        start_date: this.reqFrom.value['startDate']
+        start_date: this.reqFrom.value['startDate'].toString('YMD', '-')
       }      
     )
   }

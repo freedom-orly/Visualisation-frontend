@@ -28,17 +28,17 @@ export class Upload {
   protected updates: UpdateDto[] = [
     {
       id: "1",
-      name: "asdasd",
+      name: "Upload 1",
       time: new Date('2023-01-31'),
     },
         {
       id: "1",
-      name: "asdasd",
+      name: "Upload 2",
       time: new Date('2023-01-31'),
     },
         {
       id: "1",
-      name: "asdasd",
+      name: "Upload 3",
       time: new Date('2023-01-31'),
     }
   ];

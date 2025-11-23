@@ -4,12 +4,23 @@
 
 
 <div class="charts tui-space_top-10">
-    <app-chart class="chart" [data]="chartData"></app-chart>
-    <app-chart class="chart" [data]="chartData"></app-chart>
+    <app-chart class="chart" [data]="chartData" [type]="'bar'"></app-chart>
+    <div class="chart" tuiAppearance="floating" tuiCardLarge>
+        <header tuiHeader>
+            <h1 tuiTitle="l">
+                <span tuiSubtitle>Statistics</span>
+                {{chartData2.name}}
+            </h1>
+        </header>
+        <section>
+            <canvas class="chart2" baseChart [data]="customChartData" [options]="customChartOptions" [type]="'line'"> </canvas>
+        </section>
+
+    </div>
 </div>
 
 <div class="buttons tui-space_top-6">
     <app-link-button class="btn" [icon]="'@tui.upload'" [label]="'Data upload'" [link]="'upload'"></app-link-button>
-     <app-link-button class="btn" [icon]="'@tui.file'" [label]="'Data view'" [link]="'upload'"></app-link-button>
-      <app-link-button class="btn" [icon]="'@tui.settings'" [label]="'Settings'" [link]="'settings'"></app-link-button>
+    <app-link-button class="btn" [icon]="'@tui.file'" [label]="'Data view'" [link]="'upload'"></app-link-button>
+    <app-link-button class="btn" [icon]="'@tui.settings'" [label]="'Settings'" [link]="'settings'"></app-link-button>
 </div>

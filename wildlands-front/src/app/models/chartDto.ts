@@ -28,5 +28,10 @@ export class ChartDTO {
 
 export interface chartEntry {
   name: string,
-  values: number[][]
+  values: chartPoint[]
 } 
+
+export interface chartPoint {
+  x: unknown,
+  y: unknown
+}

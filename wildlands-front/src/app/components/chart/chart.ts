@@ -3,7 +3,7 @@ import { TuiAppearance, TuiTitle, } from '@taiga-ui/core';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { TuiAxes, TuiLineChart } from '@taiga-ui/addon-charts';
 import { type TuiPoint } from '@taiga-ui/core';
-import { ChartDTO } from '../../models/chartDto';
+import { ChartDTO, chartPoint } from '../../models/chartDto';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartData, ChartOptions } from 'chart.js';
 import { Observable } from 'rxjs';
@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 export class Chart {
   @Input() data: ChartDTO | null = null;
   @Input() dataAsync: Observable<ChartDTO> | null = null; 
+  @Input() type: 'line' | 'bar' = 'line'
   protected chartData: ChartData<'line', { key: string, value: number }[]> = {
     datasets: [{
       data: [],
@@ -87,17 +88,17 @@ export class Chart {
 
     return allDates;
   }
-  GetValues(vals: number[][]): { key: string, value: number }[] {
+  GetValues(vals: chartPoint[]): { key: string, value: number }[] {
     if (!this.data || !this.data.values) {
       return [];
     }
 
     var chartData: { key: string, value: number }[] = [];
-    const xLabels = this.GetXAxisLabels();
+    //const xLabels = this.GetXAxisLabels();
     vals.forEach(pair => {
-      const xIndex = pair[0];
-      const yValue = pair[1];
-      chartData.push({ key: xLabels[xIndex], value: yValue });
+      const xIndex = pair.x as string;
+      const yValue = pair.y as number;
+      chartData.push({ key: xIndex, value: yValue });
     });
     return chartData;
   }

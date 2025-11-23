@@ -14,7 +14,7 @@ tuiCardLarge
 
 <section>
     @if (appearance == 'History') {
-       <canvas class="chart" baseChart [data]="chartData" [options]="chartOptions" [type]="'line'"> </canvas>
+       <canvas class="chart" baseChart [data]="chartData" [options]="chartOptions" [type]="type"> </canvas>
     }
     @else if (appearance == 'Forecast') {
 

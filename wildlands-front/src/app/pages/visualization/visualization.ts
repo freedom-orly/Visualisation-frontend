@@ -31,17 +31,17 @@ export class Visualization {
   protected updates: UpdateDto[] = [
     {
       id: "1",
-      name: "asdasd",
+      name: "Update 1",
       time: new Date('2023-01-31'),
     },
         {
       id: "1",
-      name: "asdasd",
+      name: "Update 2",
       time: new Date('2023-01-31'),
     },
         {
       id: "1",
-      name: "asdasd",
+      name: "Update 3",
       time: new Date('2023-01-31'),
     }
   ];

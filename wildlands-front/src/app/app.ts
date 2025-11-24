@@ -2,7 +2,7 @@ import {KeyValuePipe, NgForOf, NgIf} from '@angular/common';
 import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {tuiAsPortal, TuiPortals, TuiRepeatTimes} from '@taiga-ui/cdk';
+import {tuiAsPortal, TuiPortals, TuiRepeatTimes,} from '@taiga-ui/cdk';
 import {
     TuiAppearance,
     TuiButton,
@@ -64,20 +64,19 @@ const ICON =
         TuiSwitch,
         TuiTabs,
         TuiTextfield,
-        TuiTitle,],
+        TuiTitle,
+],
   templateUrl: './app.html',
   styleUrl: './app.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
     // Ignore portal related code, it is only here to position drawer inside the example block
-  providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
 })
 export class App {
+
   protected readonly title = signal('wildlands-front');
   protected expanded = signal(false);
   protected open = false;
   protected switch = false;
-  protected readonly routes: any = {};
-  protected readonly breadcrumbs = ['Home', 'Angular', 'Repositories', 'Taiga UI'];
 
   protected readonly drawer = {
         Components: [
@@ -94,5 +93,9 @@ export class App {
  
     protected handleToggle(): void {
         this.expanded.update((e) => !e);
+    }
+
+    darkMode() {
+    return 'dark';
     }
 }

@@ -6,6 +6,10 @@
 /out-tsc
 /bazel-out
 
+.devenv/
+devenv.lock
+devenv.nix
+.devenv.flake.nix
 # Node
 /node_modules
 npm-debug.log

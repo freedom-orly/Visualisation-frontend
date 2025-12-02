@@ -1,0 +1,50 @@
+
+
+
+.split {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    gap: 1rem;
+    margin-top: 20px;
+    .left-panel {
+        width: 75%;
+    }
+
+    .right-panel {
+        width: 25%;
+        .vl {
+            width: 2px;
+            background-color: #ccc;
+            height: 100%;
+            float: left;
+            margin: 0 10px;
+        }
+
+        .subright {
+            display: flex;
+            flex-direction: column;
+
+            .cell {
+                margin-bottom: 0px !important;
+                margin-top: 0px !important;
+                border-radius: 0px !important;
+                border-bottom: #ccc 1px solid;
+            }
+
+            .see-more-btn {
+                width: 100%;
+            }
+        }
+    }
+}
+.spread {
+    display: none;
+}
+.desc {
+    overflow-wrap: break-word;
+}
+.export-btn {
+    justify-self: center;
+   width: 35vw;
+}

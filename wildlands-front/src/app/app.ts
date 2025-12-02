@@ -1,8 +1,8 @@
-import { KeyValuePipe, NgForOf, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { tuiAsPortal, TuiPortals, TuiRepeatTimes } from '@taiga-ui/cdk';
+import {KeyValuePipe, NgForOf, NgIf} from '@angular/common';
+import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {tuiAsPortal, TuiPortals, TuiRepeatTimes,} from '@taiga-ui/cdk';
 import {
   TuiAppearance,
   TuiButton,
@@ -38,65 +38,67 @@ const ICON =
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet,
-    TuiRoot,
-    FormsModule,
-    KeyValuePipe,
-    NgForOf,
-    NgIf,
-    RouterLink,
-    RouterLinkActive,
-    TuiAppearance,
-    TuiAvatar,
-    TuiBadge,
-    TuiBadgeNotification,
-    TuiBreadcrumbs,
-    TuiButton,
-    TuiCardLarge,
-    TuiChevron,
-    TuiDataList,
-    TuiDataListDropdownManager,
-    TuiDropdown,
-    TuiFade,
-    TuiForm,
-    TuiHeader,
-    TuiIcon,
-    TuiLink,
-    TuiNavigation,
-    TuiRepeatTimes,
-    TuiSwitch,
-    TuiTabs,
-    TuiTextfield,
-    TuiTitle,
-    LinkButtonComponent, // ✅ Register custom component
-  ],
+        RouterOutlet, 
+        TuiRoot,
+        FormsModule,
+        KeyValuePipe,
+        NgForOf,
+        NgIf,
+        RouterLink,
+        RouterLinkActive,
+        TuiAppearance,
+        TuiAvatar,
+        TuiBadge,
+        TuiBadgeNotification,
+        TuiBreadcrumbs,
+        TuiButton,
+        TuiCardLarge,
+        TuiChevron,
+        TuiDataList,
+        TuiDataListDropdownManager,
+        TuiDropdown,
+        TuiFade,
+        TuiForm,
+        TuiHeader,
+        TuiIcon,
+        TuiLink,
+        TuiNavigation,
+        TuiRepeatTimes,
+        TuiSwitch,
+        TuiTabs,
+        TuiTextfield,
+        TuiTitle,
+],
   templateUrl: './app.html',
   styleUrls: ['./app.less'], // ✅ plural, correct type
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
+    // Ignore portal related code, it is only here to position drawer inside the example block
 })
 export class App {
+
   protected readonly title = signal('wildlands-front');
   protected expanded = signal(false);
   protected open = false;
   protected switch = false;
-  protected readonly routes: any = {};
-  protected readonly breadcrumbs = ['Home', 'Angular', 'Repositories', 'Taiga UI'];
 
   protected readonly drawer = {
-    Components: [
-      { name: 'Button', icon: ICON },
-      { name: 'Input', icon: ICON },
-      { name: 'Tooltip', icon: ICON },
-    ],
-    Essentials: [
-      { name: 'Getting started', icon: ICON },
-      { name: 'Showcase', icon: ICON },
-      { name: 'Typography', icon: ICON },
-    ],
-  };
+        Components: [
+            {name: 'Button', icon: ICON},
+            {name: 'Input', icon: ICON},
+            {name: 'Tooltip', icon: ICON},
+        ],
+        Essentials: [
+            {name: 'Getting started', icon: ICON},
+            {name: 'Showcase', icon: ICON},
+            {name: 'Typography', icon: ICON},
+        ],
+    };
+ 
+    protected handleToggle(): void {
+        this.expanded.update((e) => !e);
+    }
 
-  protected handleToggle(): void {
-    this.expanded.update((e) => !e);
-  }
+    darkMode() {
+    return 'dark';
+    }
 }

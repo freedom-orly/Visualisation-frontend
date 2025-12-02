@@ -1,1 +1,176 @@
-<p>upload-details works!</p>
+<tui-breadcrumbs [size]="'l'">
+    @for (item of breadcrumbsItems; track $index) {
+    <a *tuiItem tuiLink [routerLink]="item.routerLink">{{item.caption}}</a>
+    }
+</tui-breadcrumbs>
+<hr>
+<div class="split">
+    <div class="left-panel">
+        <p tuiTextfieldSize="m" class="filters">
+            <tui-textfield class="input">
+                <label tuiLabel>Find on page</label>
+                <input tuiTextfield [(ngModel)]="search" />
+            </tui-textfield>
+
+            <!-- <tui-textfield>
+                <label tuiLabel>Minimum age</label>
+                <input tuiInputNumber [formControl]="minAge" [tuiNumberFormat]="{precision: 0}" />
+            </tui-textfield> -->
+        </p>
+        <!-- <p class="filters">
+            <label tuiLabel>
+                <input tuiCheckbox type="checkbox" [(ngModel)]="dob" />
+                Enable sorting by DOB
+            </label>
+            <button size="m" tuiButton tuiChevron tuiDropdownOpen type="button" [tuiDropdown]="dropdown">
+                Columns
+            </button>
+            <ng-template #dropdown>
+                <tui-reorder class="columns" [enabled]="enabled" [(items)]="initial" (enabledChange)="onEnabled($event)" />
+            </ng-template>
+        </p> -->
+        @if (data$ | async; as data) {
+             <table tuiTable class="table" [columns]="columns">
+                <thead>
+                    <tr tuiThGroup>
+                        <th *tuiHead="'name'" tuiTh>
+                            Name
+                        </th>
+                        <th *tuiHead="'path'" tuiTh>
+                            File path
+                        </th>
+                        <th *tuiHead="'upload'" tuiTh>
+                            Upload date
+                        </th>
+                    </tr>
+                </thead>
+                <tbody *tuiLet="data | tuiTableSort as sortedData" tuiTbody [data]="sortedData">
+                    <tr *ngFor="let item of sortedData" tuiTr>
+                        <td *tuiCell="'name'" tuiTd [class.match]="isMatch(item.name)">
+                            {{ item.name }}
+                        </td>
+                        <td *tuiCell="'path'" tuiTd [class.match]="isMatch(item.dob)">
+                            {{ item.file_path }}
+                        </td>
+                        <td *tuiCell="'upload'" tuiTd [class.match]="isMatch(item.age)">
+                            {{ item.upload_time }}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td [colSpan]="columns.length">
+                            <tui-table-pagination class="tui-space_top-2" [page]="(page$ | async) || 0"
+                                [total]="(total$ | async) || 0" (paginationChange)="onPagination($event)" />
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+        @else {
+            <tui-loader></tui-loader>
+        }
+
+    </div>
+    <div class="right-panel">
+        <div class="vl"></div>
+        <div class="subright">
+            <div class="top tui-space_top-5">
+                <h2 tuiTitle="l">
+                    {{visualization?.name}}
+                    <span class="desc" tuiSubtitle>{{visualization?.description}}</span>
+                </h2>
+                <div class="updates tui-space_top-5">
+                    <h4 tuiTitle="m">
+                        Latest updates:
+                    </h4>
+                    <div tuiAppearance="floating" class="tui-space_top-3" tuiCardLarge>
+                        <section>
+                            @for (update of visualization?.last_updates; track $index) {
+                            <div class="cell" [tuiCell]="'s'">
+                                <div class="name" tuiTitle>{{update.name}}</div>
+                                <div class="value" tuiTitle>{{update.time | date}}</div>
+                            </div>
+                            }
+                        </section>
+                    </div>
+                </div>
+
+            </div>
+            <button iconEnd="@tui.chevron-right" size="l" class="see-more-btn tui-space_bottom-10"
+                (click)="showUploadDialog(template)" appearance="success" tuiButton type="button">
+                {{ fileType === 'datafile' ? 'Upload Data File' : 'Upload R Script' }}
+            </button>
+        </div>
+
+
+    </div>
+</div>
+
+<ng-template #template let-observer>
+    <form [formGroup]="dialogForm" (ngSubmit)="submitUpload()">
+        <div class="dialog-body">
+            <div class="file-btn">
+                <label *ngIf="!control.value" tuiInputFiles >
+                    <input [accept]="fileType == 'datafile' ? '.csv,.xlsx,.rda,.rds' : '.r'" tuiInputFiles [maxFileSize]="100000000" [formControl]="control" />
+                </label>
+                <tui-files class="tui-space_top-1" >
+                    <tui-file
+                        *ngIf="control.value | tuiFileRejected: {accept: fileType == 'datafile' ? '.csv,.xlsx,.rds,.rda' : '.r', maxFileSize: 100000000} | async as file"
+                        state="error" [file]="file" (remove)="removeFile()" />
+                    <tui-file *ngIf="loadedFiles$ | async as file" [file]="file" (remove)="removeFile()" />
+                    <tui-file *ngIf="failedFiles$ | async as file" state="error" [file]="file"
+                        (remove)="removeFile()" />
+                    <tui-file *ngIf="loadingFiles$ | async as file" state="loading" [file]="file"
+                        (remove)="removeFile()" />
+                </tui-files>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button size="m" tuiButton type="button" (click)="observer.complete()">
+                Cancel
+            </button>
+            <button size="m" tuiButton appearance="success" type="submit" [disabled]="!dialogForm.valid">
+                Submit
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+	<!-- <ng-template
+    #succesTemplate="polymorpheus"
+    polymorpheus
+>
+    <p>Notifications can be shown with template</p>
+    <p>
+        Your balance:
+        <span>{{ money | tuiAmount: 'RUB' | async }}</span>
+    </p>
+    <button
+        tuiButton
+        type="button"
+        (click)="withdraw()"
+    >
+        Withdraw&nbsp;
+        <span>{{ 100 | tuiAmount: 'RUB' | async }}</span>
+    </button>
+</ng-template>
+
+	<ng-template
+    #errorTemplate="polymorpheus"
+    polymorpheus
+>
+    <p>Notifications can be shown with template</p>
+    <p>
+        Your balance:
+        <span>{{ money | tuiAmount: 'RUB' | async }}</span>
+    </p>
+    <button
+        tuiButton
+        type="button"
+        (click)="withdraw()"
+    >
+        Withdraw&nbsp;
+        <span>{{ 100 | tuiAmount: 'RUB' | async }}</span>
+    </button>
+</ng-template> -->

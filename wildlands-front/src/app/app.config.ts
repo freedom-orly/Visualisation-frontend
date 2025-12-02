@@ -5,9 +5,11 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideHttpClient } from "@angular/common/http";
 
 export const appConfig: ApplicationConfig = {
   providers: [provideAnimations(), provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes), provideClientHydration(withEventReplay()), provideEventPlugins()]
+    provideRouter(routes), provideClientHydration(withEventReplay()), provideEventPlugins(), provideCharts(withDefaultRegisterables()), provideHttpClient()]
 };

@@ -1,0 +1,17 @@
+<div tuiAppearance="floating" (tuiHoveredChange)="onHover()" tuiSurface="floating" tuiCardLarge class="link-button-card">
+
+    <section class="btn-body" (tuiHover)="onHover()" (click)="onClick()">
+        <tui-icon [icon]="icon" [style.font-size.rem]="2.5" />
+        <header tuiHeader>
+            <h2 tuiTitle>{{label}}</h2>
+        </header>
+        <button appearance="primary" iconStart="@tui.chevron-right" size="l" tuiIconButton type="button"
+            [routerLink]="link"  [style.border-radius.%]="border"
+        >
+            {{label}}
+        </button>
+
+    </section>
+
+
+</div>

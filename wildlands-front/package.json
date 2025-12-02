@@ -43,12 +43,15 @@
     "@taiga-ui/icons": "^4.57.0",
     "@taiga-ui/kit": "^4.57.0",
     "@taiga-ui/layout": "^4.57.0",
+    "@taiga-ui/styles": "^4.60.0",
+    "chart.js": "^4.5.1",
     "express": "^5.1.0",
+    "ng2-charts": "^8.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.4",
+    "@angular/build": "^20.3.8",
     "@angular/cli": "^20.3.4",
     "@angular/compiler-cli": "^20.3.0",
     "@types/express": "^5.0.1",

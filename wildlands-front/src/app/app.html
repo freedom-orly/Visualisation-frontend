@@ -1,4 +1,4 @@
-<tui-root>
+<tui-root  [attr.tuiTheme]="darkMode() ? 'dark' : null">
 <header tuiNavigationHeader>
     <button
         title="Menu"
@@ -9,19 +9,19 @@
         <tui-icon icon="@tui.layout-grid"></tui-icon>
     </button>
     <hr />
-    <button
+    <!-- <button
         appearance="accent"
         tuiButton
         type="button"
         iconEnd="@tui.log-out"
     >
         logout
-    </button>
+    </button> -->
 </header>
-<div [style.display]="'flex'" [style.height]="'100%'">
+<div [style.display]="'flex'" >
     <aside
+        class="aside-bar"
         [tuiNavigationAside]="expanded()"
-        [style.height]="'100%'"
     >
         <button
             iconStart="@tui.monitor"
@@ -159,17 +159,11 @@
     </aside>
 
     <main tuiNavigationMain>
-        <router-outlet></router-outlet>
-
-        <!-- 🧩 Added your LinkButton component here -->
-        <div style="margin-top: 2rem; display: flex; justify-content: center;">
-            <app-link-button
-                iconName="tuiIconSettings"
-                label="Settings"
-                link="/settings"
-            ></app-link-button>
-        </div>
-
+        <router-outlet [style.display]="'contents'"></router-outlet>
     </main>
 </div>
+
+
+
+
 </tui-root>

@@ -36,11 +36,18 @@
                     </h4>
                     <div tuiAppearance="floating" class="tui-space_top-3" tuiCardLarge>
                         <section>
-                            @for (update of current?.last_updates; track $index) {
+                            @if (current?.last_updates && current?.last_updates!.length > 0) {
+                                 @for (update of current?.last_updates; track $index) {
                             <div class="cell" [tuiCell]="'s'">
                                 <div class="name" tuiTitle>{{update.name}}</div>
                                 <div class="value" tuiTitle>{{update.time | date}}</div>
                             </div>
+                            }
+                            }
+                            @else {
+                                <div class="cell" [tuiCell]="'s'">
+                                    No updates available.
+                                </div>
                             }
                         </section>
                     </div>

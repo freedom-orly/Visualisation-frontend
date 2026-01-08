@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { FileUploadQuery } from './models/FileUploadQuery';
 import { FileQuery } from './models/FileQuery';
 import { ChartQuery } from './models/ChartQuery';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { FileUploadResponse } from './models/FileUploadResponse';
 import { FileDTO } from './models/FileDTO';
 import { ChartDTO } from './models/chartDto';
 import { VisualizationDTO } from './models/VisualizationDTO';
+import { UpdateDto } from './models/updateDto';
 
 @Injectable({
   providedIn: 'root'
@@ -58,6 +59,27 @@ export class HttpService {
     req.start_date = new Date(req.start_date, ).toISOString().split('T')[0];
     req.end_date = new Date(req.end_date).toISOString().split('T')[0];
     return this.http.post<ChartDTO>(`${this.apiUrl}/visualizations/chart`, req);
+  }
+
+  getUpdatesForVisualization(visId: number): Observable<UpdateDto[]> {
+    return of([
+    {
+      id: "1",
+      name: "Upload 1",
+      time: new Date('2023-01-31'),
+    },
+        {
+      id: "1",
+      name: "Upload 2",
+      time: new Date('2023-01-31'),
+    },
+        {
+      id: "1",
+      name: "Upload 3",
+      time: new Date('2023-01-31'),
+    }
+  ]);
+    //return this.http.get<UpdateDto[]>(`${this.apiUrl}/visualizations/${visId}/updates`);
   }
   
 }

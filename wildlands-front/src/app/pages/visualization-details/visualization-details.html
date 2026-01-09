@@ -9,7 +9,7 @@
 
         @if (chartData$ | async; as data ) {
         @if (!this.error) {
-        <app-chart [data]="data"></app-chart>
+        <app-chart [data]="data" [type]="'bar'"></app-chart>
         }
         @else {
         <tui-icon [style.color]="'var(--tui-text-negative)'" icon="@tui.circle-x"></tui-icon>
@@ -22,7 +22,7 @@
     </div>
     <div class="right-panel">
         <div class="subright">
-            <form [formGroup]="reqFrom" (ngSubmit)="UpdateChart()" tuiAppearance="floating" tuiCardLarge>
+            <!-- <form [formGroup]="reqFrom" (ngSubmit)="UpdateChart()" tuiAppearance="floating" tuiCardLarge>
                 <section>
                     <div class="dates">
                         <tui-textfield class="tui-space_top-2">
@@ -50,7 +50,15 @@
                         Update
                     </button>
                 </footer>
-            </form>
+            </form> -->
+            @if (visualizationId$) {
+            @if (visualizationId$ | async; as visualizationId) {
+            <app-dynamic-inputs #dynamicInputs [visualizationId]="visualizationId" [formReady]="formReady$"
+                (SubmitForm)="UpdateChart($event)" ></app-dynamic-inputs>
+            }
+            }
+
+
         </div>
 
 

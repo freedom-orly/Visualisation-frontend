@@ -1,28 +1,26 @@
 export class ChartDTO {
   visualization_id: number;
   name: string;
-  start_date: Date;
-  end_date: Date;
+  // start_date: Date;
+  // end_date: Date;
   prediction: boolean;
-  values: chartEntry[]
-  spread?: number; // Representing timedelta in seconds
+  values: chartEntry[];
+  chart_type: 'line' | 'bar';
 
   constructor(
     visualizationId: number,
     name: string,
-    startDate: Date,
-    endDate: Date,
     prediction: boolean,
     values: chartEntry[],
-    spread: number | undefined
+    chart_type: 'line' | 'bar'
   ) {
     this.visualization_id = visualizationId;
     this.name = name;
-    this.start_date = startDate;
-    this.end_date = endDate;
+    // this.start_date = startDate;
+    // this.end_date = endDate;
     this.prediction = prediction;
     this.values = values;
-    this.spread = spread;
+    this.chart_type = chart_type;
   }
 }
 

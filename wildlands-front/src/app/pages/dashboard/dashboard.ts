@@ -17,8 +17,6 @@ export class Dashboard {
   protected readonly chartData: ChartDTO = new ChartDTO(
     1,
     'Recent Stores Revenue',
-    new Date('2025-09-01'),
-    new Date('2025-10-31'),
     false,
     [{
       name: "store 1",
@@ -123,14 +121,12 @@ export class Dashboard {
   { x: '2025-09-29', y: 1926 },
   { x: '2025-09-30', y: 1350 }]
     }],
-    604800000 // Spread of 1 day in seconds
+    'line'
   );
 
   protected readonly chartData2: ChartDTO = new ChartDTO(
     1,
     'Recent Weather Data',
-    new Date('2025-09-01'),
-    new Date('2025-10-31'),
     false,
     [{
       name: "store 1",
@@ -139,7 +135,7 @@ export class Dashboard {
       name: "Weather",
       values: []
     }],
-    86400000 // Spread of 1 day in seconds
+    'line'
   );
   customChartOptions: ChartOptions = {
     responsive: true,

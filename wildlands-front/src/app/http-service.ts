@@ -9,6 +9,7 @@ import { FileDTO } from './models/FileDTO';
 import { ChartDTO } from './models/chartDto';
 import { VisualizationDTO } from './models/VisualizationDTO';
 import { UpdateDto } from './models/updateDto';
+import { VisualizationInputFieldDTO } from './models/VisualizationInputDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -56,8 +57,6 @@ export class HttpService {
   }
 
   getChart(req: ChartQuery): Observable<ChartDTO> {
-    req.start_date = new Date(req.start_date, ).toISOString().split('T')[0];
-    req.end_date = new Date(req.end_date).toISOString().split('T')[0];
     return this.http.post<ChartDTO>(`${this.apiUrl}/visualizations/chart`, req);
   }
 
@@ -80,6 +79,64 @@ export class HttpService {
     }
   ]);
     //return this.http.get<UpdateDto[]>(`${this.apiUrl}/visualizations/${visId}/updates`);
+  }
+  getVisualizationInputFields(visualizationId: number): Observable<VisualizationInputFieldDTO[]> {
+    // return of([
+    //   {
+    //     id: 1,
+    //     visualization_id: visualizationId,
+    //     field_name: 'start_date',
+    //     field_type: 'date',
+    //     field_label: 'Start Date',
+    //     required: true,
+    //     options: []
+    //   },
+    //   {
+    //     id: 2,
+    //     visualization_id: visualizationId,
+    //     field_name: 'end_date',
+    //     field_type: 'date',
+    //     field_label: 'End Date',
+    //     required: true,
+    //     options: []
+    //   },{
+    //     id: 3,
+    //     visualization_id: visualizationId,
+    //     field_name: 'spread',
+    //     field_type: 'select',
+    //     field_label: 'Spread',
+    //     required: true,
+    //     options: ['1 day', '1 week', '1 month']
+    //   },
+    //   {
+    //     id: 3,
+    //     visualization_id: visualizationId,
+    //     field_name: 'additional_notes',
+    //     field_type: 'text',
+    //     field_label: 'Additional Notes',
+    //     required: false,
+    //     options: []
+    //   },
+    //   {
+    //     id: 4,
+    //     visualization_id: visualizationId,
+    //     field_type: 'selectMulti',
+    //     field_name: 'data_sources',
+    //     field_label: 'Data Sources',
+    //     required: false,
+    //     options: ['Source A', 'Source B', 'Source C']
+    //   },
+    //   {
+    //     id: 5,
+    //     visualization_id: visualizationId,
+    //     field_type: 'number',
+    //     field_name: 'threshold',
+    //     field_label: 'Threshold',
+    //     required: false,
+    //     options: []
+    //   }
+    // ]);
+    return this.http.get<VisualizationInputFieldDTO[]>(`${this.apiUrl}/visualizations/${visualizationId}/input-fields`);
   }
   
 }

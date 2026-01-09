@@ -20,7 +20,7 @@ export class Chart {
   @Input() data: ChartDTO | null = null;
   @Input() dataAsync: Observable<ChartDTO> | null = null; 
   @Input() type: 'line' | 'bar' = 'line'
-  protected chartData: ChartData<'line', { key: string, value: number }[]> = {
+  protected chartData: ChartData<typeof this.type, { key: string, value: number }[]> = {
     datasets: [{
       data: [],
       parsing: {
@@ -73,21 +73,21 @@ export class Chart {
     return 'History';
   }
 
-  GetXAxisLabels(): string[] {
-    if (!this.data || !this.data.start_date || !this.data.spread || !this.data.end_date) {
-      return [];
-    }
-    const allDates: string[] = [];
-    const startTime = this.data.start_date.getTime();
-    const endTime = this.data.end_date.getTime();
-    const spreadInMs = this.data.spread;
-    for (let time = startTime; time <= endTime; time += spreadInMs) {
-      const date = new Date(time);
-      allDates.push(`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
-    }
+  // GetXAxisLabels(): string[] {
+  //   if (!this.data || !this.data.start_date || !this.data.spread || !this.data.end_date) {
+  //     return [];
+  //   }
+  //   const allDates: string[] = [];
+  //   const startTime = this.data.start_date.getTime();
+  //   const endTime = this.data.end_date.getTime();
+  //   const spreadInMs = this.data.spread;
+  //   for (let time = startTime; time <= endTime; time += spreadInMs) {
+  //     const date = new Date(time);
+  //     allDates.push(`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
+  //   }
 
-    return allDates;
-  }
+  //   return allDates;
+  // }
   GetValues(vals: chartPoint[]): { key: string, value: number }[] {
     if (!this.data || !this.data.values) {
       return [];

@@ -25,27 +25,12 @@ export class Visualization {
 
   constructor(private HttpService: HttpService) {}
 
+  protected selected: VisualizationDTO | null = null;
   protected current: VisualizationDTO | null = null;
-
+  protected updates: Observable<UpdateDto[]> | null = null; 
   protected visualizations$: Observable<VisualizationDTO[]> | null = null;
-  protected updates: UpdateDto[] = [
-    {
-      id: "1",
-      name: "Update 1",
-      time: new Date('2023-01-31'),
-    },
-        {
-      id: "1",
-      name: "Update 2",
-      time: new Date('2023-01-31'),
-    },
-        {
-      id: "1",
-      name: "Update 3",
-      time: new Date('2023-01-31'),
-    }
-  ];
-
+  protected showSelected: boolean = false;
+  
   readonly breadcrumbsItems = [
     {
       caption: 'Home',
@@ -70,8 +55,29 @@ export class Visualization {
   }
 
   changeVisualization(vis: VisualizationDTO) {
+    this.showSelected = false;
     this.current = vis;
-    this.current.last_updates = this.updates;
+     this.updates = this.HttpService.getUpdatesForVisualization(vis.id).pipe(
+          map(u => {
+            this.current!.last_updates = u;
+            return u;
+          })  
+        );
+  }
+
+   selectVisualization(vis: VisualizationDTO) {
+
+        this.selected = vis;
+        this.updates = this.HttpService.getUpdatesForVisualization(vis.id).pipe(
+          map(u => {
+            this.selected!.last_updates = u;
+            return u;
+          })  
+        );
+  }
+
+    clearCurrent() {
+    this.showSelected = true;
   }
 
 

@@ -14,10 +14,16 @@ import { TuiHovered } from "@taiga-ui/cdk";
 export class LinkButton {
   @Output() click = new EventEmitter<void>();
   @Output() hover = new EventEmitter<void>();
+  @Output() leave = new EventEmitter<void>();
   @Input() icon: string = 'link';
   @Input() label: string = 'Go to Link'
   @Input() link: string = '/';
   @Input() border: number = 40;
+  @Input() appearance: string= 'secondary';
+  @Input() hoverSensitive: boolean = false;
+
+  
+
 
   onClick() {
     this.click.emit();
@@ -25,5 +31,8 @@ export class LinkButton {
 
   onHover() {
     this.hover.emit();
+  }
+  onLeave() {
+    this.leave.emit();
   }
 }

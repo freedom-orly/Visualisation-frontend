@@ -1,5 +1,5 @@
 import { AsyncPipe, DatePipe, NgForOf, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   type TuiComparator,
@@ -18,13 +18,15 @@ import {
   tuiIsFalsy,
   tuiIsPresent,
   TuiLet,
+  TuiPopover,
   tuiToInt,
 } from '@taiga-ui/cdk';
-import { TuiAlertService, TuiButton, TuiDialogContext, TuiDialogService, TuiDropdown, TuiLabel, TuiLoader, TuiNumberFormat, TuiTextfield, TuiTitle } from '@taiga-ui/core';
-import { TuiCheckbox, TuiChevron, TuiInputNumber, TuiBreadcrumbs, TuiAvatar, TuiFileLike, TuiFiles, TuiTile } from '@taiga-ui/kit';
-import { PolymorpheusComponent, PolymorpheusTemplate, type PolymorpheusContent } from '@taiga-ui/polymorpheus';
+import { TuiAlertOptions, TuiAlertService, TuiButton, TuiDialogContext, TuiDialogService, TuiDropdown, TuiIcon, TuiLabel, TuiLoader, TuiNumberFormat, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { TuiCheckbox, TuiChevron, TuiInputNumber, TuiBreadcrumbs, TuiAvatar, TuiFileLike, TuiFiles, TuiTile, TuiStatus } from '@taiga-ui/kit';
+import { injectContext, PolymorpheusComponent, PolymorpheusTemplate, type PolymorpheusContent } from '@taiga-ui/polymorpheus';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   debounceTime,
   filter,
@@ -36,16 +38,18 @@ import {
   startWith,
   Subject,
   switchMap,
+  takeUntil,
   tap,
   timer,
 } from 'rxjs';
 import { VisualizationDTO } from '../../models/VisualizationDTO';
 import { FilePage } from '../../models/FilePage';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpService } from '../../http-service';
 import { TuiCardLarge, TuiCell } from '@taiga-ui/layout';
 import { FileDTO } from '../../models/FileDTO';
 import e from 'express';
+import { UpdateDto } from '../../models/updateDto';
 
 
 const TODAY = TuiDay.currentLocal();
@@ -57,6 +61,32 @@ const TODAY = TuiDay.currentLocal();
 
 function sortBy(key: keyof FileDTO, direction: TuiSortDirection): TuiComparator<FileDTO> {
   return (a, b) => direction * tuiDefaultSort(a[key], b[key]);
+}
+
+
+@Component({
+  standalone: true,
+  exportAs: "Example3",
+  imports: [NgForOf, TuiButton],
+  template: `
+        <p>Do you want to delete this file?</p>
+        <button
+            *ngFor="let response of [true, false]"
+            appearance="outline-grayscale"
+            size="s"
+            tuiButton
+            type="button"
+            class="tui-space_right-1"
+            (click)="context.completeWith(response)"
+        >
+            {{ response ? 'Yes' : 'No' }}
+        </button>
+    `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AlertExample {
+  protected readonly context =
+    injectContext<TuiPopover<TuiAlertOptions<void>, boolean>>();
 }
 
 
@@ -90,12 +120,15 @@ function sortBy(key: keyof FileDTO, direction: TuiSortDirection): TuiComparator<
     DatePipe,
     TuiCardLarge,
     TuiTitle,
-    PolymorpheusTemplate
-],
+    PolymorpheusTemplate,
+    TuiIcon,
+    TuiStatus
+  ],
   templateUrl: './upload-details.html',
   styleUrl: './upload-details.less'
 })
 export class UploadDetails {
+
 
 
   readonly breadcrumbsItems = [
@@ -112,13 +145,14 @@ export class UploadDetails {
       routerLink: ''
     }
   ];
+  protected updates: Observable<UpdateDto[]> | null = null;
   protected fileType: 'rscript' | 'datafile' = 'datafile';
   protected visualization: VisualizationDTO | null = null;
   protected filesPage: FilePage | null = null;
   protected selected = [];
   protected initial: readonly string[] = ['Name', 'Date of Birth', 'Age'];
   protected enabled = this.initial;
-  protected columns = ['name', 'path', 'upload'];
+  protected columns = ['name', 'path', 'upload', 'actions'];
   protected dob = false;
   protected search = '';
   protected readonly control = new FormControl<File | null>(
@@ -138,6 +172,34 @@ export class UploadDetails {
   protected readonly loadedFiles$ = this.control.valueChanges.pipe(
     switchMap((file) => this.processFile(file)),
   );
+
+  itemToBeDeleted: any = null;
+  private readonly alerts = inject(TuiAlertService); // 2 TuiAlertServices? What could go wrong?
+  private readonly notification = this.alerts
+    .open<boolean>(new PolymorpheusComponent(AlertExample), {
+      data: this.itemToBeDeleted,
+      label: 'Delete Confirmation',
+      appearance: 'warning',
+      autoClose: 0,
+    })
+    .pipe(
+      switchMap((confirmed) => {
+        if (confirmed && this.itemToBeDeleted) {
+          return this.HttpService.deleteFile(this.itemToBeDeleted.id)
+        }
+        return of(null);
+      }),
+      map((response) => {
+        if (response && response.success) {
+          return this.tuiAlert.open('The file has been successfully deleted.', { label: 'Success!', appearance: 'positive' })
+        } else if (response && !response.success) {
+          return this.tuiAlert.open(`Unfortunetly we couldn't delete this file. ${response.message}`, { label: 'Something went wrong', appearance: 'negative' })
+        }
+        return of(null);
+      }),
+      catchError(() => this.tuiAlert.open('Unfortunetly we couldn\'t delete this file.', { label: 'Something went wrong', appearance: 'negative' })),
+      takeUntil(inject(Router).events)
+    );
 
   protected readonly request$ = combineLatest([
     this.page$,
@@ -180,6 +242,8 @@ export class UploadDetails {
     this.HttpService.getVisualizationById(visualizationId).subscribe((data) => {
       this.visualization = data;
     });
+    this.updates = this.HttpService.getUpdatesForVisualization(visualizationId);
+
     this.route.pathFromRoot[1].url.subscribe(urlSegment => {
       if (urlSegment.length > 0) {
         if (urlSegment.at(-2)!.path === 'rscript') {
@@ -193,6 +257,13 @@ export class UploadDetails {
       }
     });
 
+  }
+
+  deleteUpload(item: any) {
+    this.itemToBeDeleted = item; // not the best practice, but ok for this case
+    this.notification.subscribe(() => {
+      this.data$ = this.fileType === 'datafile' ? this.getFilesData(this.page$.value, this.size$.value) : this.getRScriptFilesData(this.page$.value, this.size$.value);
+    });
   }
 
   showUploadDialog(content: PolymorpheusContent<TuiDialogContext>) {
@@ -269,15 +340,15 @@ export class UploadDetails {
           }
         ).subscribe(
           {
-            error: () =>{
-              this.tuiAlert.open('Unfortunetly we couldn\'t upload this file.', {label: 'Something went wrong', appearance: 'negative'})
-            .subscribe();
-            this.control.setValue(null);
+            error: () => {
+              this.tuiAlert.open('Unfortunetly we couldn\'t upload this file.', { label: 'Something went wrong', appearance: 'negative' })
+                .subscribe();
+              this.control.setValue(null);
             },
             complete: () => {
-              this.tuiAlert.open('This file has been successfully uploaded!', {label: 'Success!', appearance: 'positive'})
-            .subscribe();
-            this.control.setValue(null);
+              this.tuiAlert.open('This file has been successfully uploaded!', { label: 'Success!', appearance: 'positive' })
+                .subscribe();
+              this.control.setValue(null);
             }
           }
         );
@@ -289,18 +360,18 @@ export class UploadDetails {
             visualizationId: Number(this.route.snapshot.paramMap.get('id'))
           }
         ).subscribe({
-                      error: () =>{
-              this.tuiAlert.open('Unfortunetly we couldn\'t upload this file.', {label: 'Something went wrong', appearance: 'negative'})
-            .subscribe();
+          error: () => {
+            this.tuiAlert.open('Unfortunetly we couldn\'t upload this file.', { label: 'Something went wrong', appearance: 'negative' })
+              .subscribe();
             this.control.setValue(null);
-            },
-            complete: () => {
-              this.tuiAlert.open('This file has been successfully uploaded!', {label: 'Success!', appearance: 'positive'})
-            .subscribe();
+          },
+          complete: () => {
+            this.tuiAlert.open('This file has been successfully uploaded!', { label: 'Success!', appearance: 'positive' })
+              .subscribe();
             this.control.setValue(null);
-            }
-            
           }
+
+        }
         );
       }
     }

@@ -10,15 +10,19 @@ import { ChartDTO } from './models/chartDto';
 import { VisualizationDTO } from './models/VisualizationDTO';
 import { UpdateDto } from './models/updateDto';
 import { VisualizationInputFieldDTO } from './models/VisualizationInputDTO';
+import appConfig from './appConfig.json';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
+  updateBackendAddress(backendAddress: string) {
+    this.apiUrl = backendAddress + '/api';
+  }
 
-  private readonly apiUrl = 'http://localhost:5000/api';
+  private apiUrl = '';
   constructor(private http: HttpClient) {
-    
+    this.apiUrl = appConfig.backendAddress + '/api';
    }
 
   uploadDataFile(req: FileUploadQuery): Observable<FileUploadResponse> {
@@ -61,25 +65,9 @@ export class HttpService {
   }
 
   getUpdatesForVisualization(visId: number): Observable<UpdateDto[]> {
-    return of([
-    {
-      id: "1",
-      name: "Upload 1",
-      time: new Date('2023-01-31'),
-    },
-        {
-      id: "1",
-      name: "Upload 2",
-      time: new Date('2023-01-31'),
-    },
-        {
-      id: "1",
-      name: "Upload 3",
-      time: new Date('2023-01-31'),
-    }
-  ]);
-    //return this.http.get<UpdateDto[]>(`${this.apiUrl}/visualizations/${visId}/updates`);
+    return this.http.get<UpdateDto[]>(`${this.apiUrl}/updates/${visId}`);
   }
+
   getVisualizationInputFields(visualizationId: number): Observable<VisualizationInputFieldDTO[]> {
     // return of([
     //   {
@@ -137,6 +125,10 @@ export class HttpService {
     //   }
     // ]);
     return this.http.get<VisualizationInputFieldDTO[]>(`${this.apiUrl}/visualizations/${visualizationId}/input-fields`);
+  }
+
+  deleteFile(fileId: number): Observable<{success: boolean; message: string}> {
+    return this.http.delete<{success: boolean; message: string}>(`${this.apiUrl}/files/${fileId}`);
   }
   
 }

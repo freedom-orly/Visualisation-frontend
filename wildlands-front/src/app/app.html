@@ -18,10 +18,11 @@
         logout
     </button> -->
 </header>
-<div [style.display]="'flex'" >
+<div [style.display]="'flex'">
     <aside
         class="aside-bar"
         [tuiNavigationAside]="expanded()"
+        [class.mobile-visible]="expanded()"
     >
         <button
             iconStart="@tui.monitor"

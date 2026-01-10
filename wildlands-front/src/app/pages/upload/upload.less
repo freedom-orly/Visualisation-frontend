@@ -1,34 +1,42 @@
 :host {
-  height: 100%;
+    height: 100%;
 }
 
 .split {
     display: flex;
     flex-direction: row;
     height: 100%;
+    gap: 0;
+
     .left-panel {
         width: 60%;
         overflow: auto;
         height: calc(92vh - 3rem);
+        min-width: 0;
     }
 
     .right-panel {
-        gap: 1rem;
         width: 40%;
+        min-width: 0;
+        display: flex;
+        flex-direction: row;
+
         .vl {
             width: 2px;
             background-color: #ccc;
             height: 100%;
-            float: left;
+            flex-shrink: 0;
             margin: 0 10px;
         }
 
         .subright {
+            flex: 1;
             height: 100%;
             display: flex;
             flex-direction: column;
-            margin-left: 2rem;
+            margin-left: 0;
             justify-content: space-between;
+            overflow-y: auto;
 
             .cell {
                 margin-bottom: 0px !important;
@@ -36,8 +44,9 @@
                 border-radius: 0px !important;
                 border-bottom: #ccc 1px solid;
             }
+
             .bottom {
-                
+                padding-top: 1rem;
             }
 
             .see-more-btn {
@@ -49,4 +58,51 @@
 
 .desc {
     overflow-wrap: break-word;
+}
+
+@media (max-width: 1024px) {
+    .split {
+        flex-direction: column;
+        height: auto;
+
+        .left-panel {
+            width: 100%;
+            height: auto;
+            max-height: 50vh;
+            border-bottom: 2px solid #ccc;
+        }
+
+        .right-panel {
+            width: 100%;
+            flex-direction: column;
+
+            .vl {
+                width: 100%;
+                height: 2px;
+                margin: 10px 0;
+            }
+
+            .subright {
+                margin-left: 1rem;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    :host {
+        height: auto;
+    }
+
+    .split {
+        .left-panel {
+            max-height: 40vh;
+        }
+
+        .right-panel {
+            .subright {
+                margin-left: 0.5rem;
+            }
+        }
+    }
 }

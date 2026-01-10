@@ -11,8 +11,21 @@
 
 @media @tui-mobile {
     .aside-bar {
-        display: none;
+        display: none !important;
         inline-size: 100%;
+        position: fixed;
+        top: 3rem;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999;
+        background: var(--tui-background-base);
+        overflow-y: auto;
+        flex-direction: column;
+
+        &.mobile-visible {
+            display: flex !important;
+        }
 
         & + main[tuiNavigationMain] {
             max-inline-size: 100%;

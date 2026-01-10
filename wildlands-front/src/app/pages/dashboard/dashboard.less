@@ -1,43 +1,56 @@
 :host {
     display: grid;
-}
-
-.asd {
-    height: 100%;
-    background-color: aqua;
-}
-
-.axes {
-    block-size: 12.5rem;
-    inline-size: 25rem;
-    color: #bc71c9;
+    gap: 1.5rem;
 }
 
 .charts {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1rem;
-    
-    .chart {
-        width: 45%;
-    }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 1.25rem;
+    align-items: stretch;
 }
+
 .chart {
     display: flex;
-    width: 100%;
     flex-direction: column;
+    width: 100%;
+    min-height: clamp(16rem, 36vw, 24rem);
 }
 
 .buttons {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     width: 100%;
+
     .btn {
-        width: 35%;
+        flex: 1 1 12rem;
     }
 }
 
 .chart2 {
     width: 100% !important;
-    height: 100% !important;
+    height: clamp(14rem, 30vw, 22rem) !important;
+}
+
+@media (max-width: 900px) {
+    :host {
+        gap: 1rem;
+    }
+
+    .charts {
+        grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .buttons {
+        .btn {
+            flex-basis: 100%;
+        }
+    }
+
+    .chart2 {
+        height: clamp(12rem, 45vw, 18rem) !important;
+    }
 }

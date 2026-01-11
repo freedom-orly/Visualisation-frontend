@@ -5,7 +5,7 @@ import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiDay, TuiItem } from '@taiga-ui/cdk';
 import { TuiButton, TuiFormatNumberPipe, TuiLink, TuiTitle, TuiTextfieldComponent, TuiCalendar, TuiTextfield, TuiLoader, TuiIcon, TuiAppearance } from '@taiga-ui/core';
 import { TuiAccordionDirective, TuiAccordionItem, TuiBreadcrumbs, TuiDataListWrapperComponent, TuiInputDate, TuiSelect } from '@taiga-ui/kit/components';
-import { TuiCardLarge, TuiCell, TuiHeader, TuiSubheaderComponent } from '@taiga-ui/layout';
+import { TuiCardLarge, TuiCell, TuiHeader, TuiSubheaderComponent, TuiCardMedium } from '@taiga-ui/layout';
 import { LinkButton } from '../../components/link-button/link-button';
 import { Chart } from "../../components/chart/chart";
 import { ChartDTO } from '../../models/chartDto';
@@ -15,6 +15,8 @@ import { catchError, combineLatest, fromEvent, last, map, Observable, of, Subjec
 import { response } from 'express';
 import { DynamicInputs } from "../../components/dynamic-inputs/dynamic-inputs";
 import { JQueryStyleEventEmitter } from 'rxjs/internal/observable/fromEvent';
+import { UpdateDto } from '../../models/updateDto';
+import { TuiButtonClose } from '@taiga-ui/kit';
 
 @Component({
   selector: 'app-visualization-details',
@@ -45,11 +47,12 @@ import { JQueryStyleEventEmitter } from 'rxjs/internal/observable/fromEvent';
     TuiSelect,
     TuiTextfield,
     TuiInputDate,
-    NgIf, TuiLoader, TuiIcon, TuiAppearance, ReactiveFormsModule, DynamicInputs],
+    NgIf, TuiLoader, TuiIcon, TuiAppearance, ReactiveFormsModule, DynamicInputs, TuiCardMedium, TuiButtonClose],
   templateUrl: './visualization-details.html',
   styleUrl: './visualization-details.less'
 })
 export class VisualizationDetails {
+
   formReady$: Subject<FormGroup> = new Subject<FormGroup>();
   chartData$: Observable<ChartDTO> | null = null;
   spreadOptions: readonly string[] = ['1 day', '1 week', '1 month'];
@@ -58,12 +61,14 @@ export class VisualizationDetails {
   spread: '1 day' | '1 week' | '1 month' = '1 day';
   visualizationId$: Observable<number> | null = null;
   formGroup$: Observable<FormGroup> | null = null;
+  dataFiles$: Observable<UpdateDto[]> | null = null;
   // reqFrom: FormGroup = new FormGroup({
   //   startDate: new FormControl(new TuiDay(2025, 10, 1), Validators.required),
   //   endDate: new FormControl(new TuiDay(2025, 10, 30), Validators.required),
   //   spread: new FormControl('1 day', Validators.required)
   // })
   error: boolean = false;
+  warningClosed: boolean = false;
 
   constructor(private route: ActivatedRoute, private http: HttpService) {
   
@@ -73,14 +78,27 @@ export class VisualizationDetails {
     //Add 'implements OnInit' to the class.
     const id = parseInt(this.route.snapshot.paramMap.get('id') ?? '');
     this.visualizationId$ = of(id);
+    this.dataFiles$ = this.http.getUpdatesForVisualization(id).pipe(
+      map((updates: UpdateDto[]) => updates.filter((update: UpdateDto) => update.name.split('.').pop()?.toLowerCase() != 'r')),
+      catchError((err) => {
+        this.error = true;
+        return of([]);
+      })
+    );
     this.formReady$.subscribe((formGroup: FormGroup) => {
       this.chartData$ = this.http.getChart(
         {
           id: id,
           inputs: formGroup.value
         }      
+      ).pipe(
+        catchError((err) => {
+          this.error = true;
+          return of(new ChartDTO(id, 'Error', false, [], 'line'));
+        })
       );
     });
+
     
   }
 
@@ -119,6 +137,10 @@ export class VisualizationDetails {
       }      
     )
   }
+
+  closeWarning() {
+    this.warningClosed = true;
+}
 
   
 }

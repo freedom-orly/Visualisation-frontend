@@ -133,11 +133,11 @@
             <div class="file-btn">
                 <label *ngIf="!control.value" tuiInputFiles>
                     <input [accept]="fileType == 'datafile' ? '.csv,.xlsx,.rda,.rds' : '.r'" tuiInputFiles
-                        [maxFileSize]="100000000" [formControl]="control" />
+                        [maxFileSize]="100000000000000" [formControl]="control" />
                 </label>
                 <tui-files class="tui-space_top-1">
                     <tui-file
-                        *ngIf="control.value | tuiFileRejected: {accept: fileType == 'datafile' ? '.csv,.xlsx,.rds,.rda' : '.r', maxFileSize: 100000000} | async as file"
+                        *ngIf="control.value | tuiFileRejected: {accept: fileType == 'datafile' ? '.csv,.xlsx,.rds,.rda' : '.r', maxFileSize: 100000000000000} | async as file"
                         state="error" [file]="file" (remove)="removeFile()" />
                     <tui-file *ngIf="loadedFiles$ | async as file" [file]="file" (remove)="removeFile()" />
                     <tui-file *ngIf="failedFiles$ | async as file" state="error" [file]="file"

@@ -130,5 +130,16 @@ export class HttpService {
   deleteFile(fileId: number): Observable<{success: boolean; message: string}> {
     return this.http.delete<{success: boolean; message: string}>(`${this.apiUrl}/files/${fileId}`);
   }
+
+  anyFilesExists() : Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/files/exists`);
+  }
+
+  getRecentStoreRevenueChart(): Observable<ChartDTO> {
+    return this.http.get<ChartDTO>(`${this.apiUrl}/charts/recent-store-revenue`);
+  }
+  getRecentWeatherDataChart(): Observable<ChartDTO> {
+    return this.http.get<ChartDTO>(`${this.apiUrl}/charts/recent-weather-data`);
+  }
   
 }

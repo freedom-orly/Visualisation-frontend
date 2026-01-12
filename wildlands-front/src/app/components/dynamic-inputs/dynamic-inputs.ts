@@ -112,12 +112,13 @@ export class DynamicInputs {
             const validators = field.required ? [Validators.required] : [];
             this.formGroup.addControl(field.field_name, new FormControl(field.default_value || '', validators));
           });
+          this.formReady?.next(this.formGroup);
           return fields;
         })
       );
       
       if (this.formReady) {
-        this.formReady.next(this.formGroup);
+        
       }
       return;
     }

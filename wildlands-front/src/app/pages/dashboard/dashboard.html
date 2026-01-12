@@ -5,7 +5,7 @@
 
 <div class="charts tui-space_top-10">
     @if (anyData$ | async; as hasData) {
-    @if (!hasData) {
+    @if (!hasData.exists) {
     <div class="chart">
         <div tuiCardLarge class="add-data-info">
             <header tuiHeader>
@@ -88,8 +88,11 @@
     </div>
     }
     @else {
-    <app-chart class="chart" [data]="chartData" [type]="'bar'">
+    @if (resentRevenue$ | async; as revData) {
+    <app-chart class="chart" [data]="revData" [type]="'bar'">
     </app-chart>
+    }
+    @if (recentWeather$ | async; as weatherData) {
     <div class="chart" tuiAppearance="floating" tuiCardLarge>
         <header tuiHeader>
             <h1 tuiTitle="l">
@@ -98,11 +101,13 @@
             </h1>
         </header>
         <section>
-            <canvas class="chart2" baseChart [data]="customChartData" [options]="customChartOptions" [type]="'line'">
+            <canvas class="chart2" baseChart [data]="getCustomData(weatherData)" [options]="customChartOptions" [type]="'line'">
             </canvas>
         </section>
 
     </div>
+    }
+
     }
     }
 

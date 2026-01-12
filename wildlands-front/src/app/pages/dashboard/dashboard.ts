@@ -245,14 +245,36 @@ export class Dashboard {
 
   resentRevenue$: Observable<ChartDTO> = of(this.chartData);
   recentWeather$: Observable<ChartDTO> = of(this.chartData2);
-  anyData$: Observable<boolean> = of(false)
+  anyData$: Observable<{exists: boolean}> = of({exists: false})
 
   constructor(private httpService: HttpService) {
     this.anyData$ = this.httpService.anyFilesExists()
   }
 
   ngOnInit() {
-    
+    this.recentWeather$ = this.httpService.getRecentWeatherDataChart();
+    this.resentRevenue$ = this.httpService.getRecentStoreRevenueChart();
+  }
+
+  getCustomData(dto: ChartDTO): ChartData<'line', { key: string, value: number }[]> {
+    const datasets: any[] = [];
+    dto.values.forEach((series, index) => {
+      datasets.push({
+        label: series.name,
+        data: series.values.map(point => {
+          return { key: point.x, value: point.y };
+        }),
+        parsing: {
+          xAxisKey: 'key',
+          yAxisKey: 'value'
+        },
+        yAxisID: ["Temperature", "Precipitation"].includes(series.name) ? 'y2' : 'y'
+      });
+    });
+    return {
+      datasets: datasets
+    };
+
   }
 
 }

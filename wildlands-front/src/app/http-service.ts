@@ -61,6 +61,7 @@ export class HttpService {
   }
 
   getChart(req: ChartQuery): Observable<ChartDTO> {
+    var d = req;
     return this.http.post<ChartDTO>(`${this.apiUrl}/visualizations/chart`, req);
   }
 
@@ -131,8 +132,8 @@ export class HttpService {
     return this.http.delete<{success: boolean; message: string}>(`${this.apiUrl}/files/${fileId}`);
   }
 
-  anyFilesExists() : Observable<boolean> {
-    return this.http.get<boolean>(`${this.apiUrl}/files/exists`);
+  anyFilesExists() : Observable<{exists: boolean}> {
+    return this.http.get<{exists: boolean}>(`${this.apiUrl}/dashboard-files/exists`);
   }
 
   getRecentStoreRevenueChart(): Observable<ChartDTO> {

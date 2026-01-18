@@ -23,7 +23,7 @@
         }
         @if (chartData$ | async; as data ) {
         @if (!this.error) {
-        <app-chart [data]="data" [type]="'bar'"></app-chart>
+        <app-chart [data]="data" [type]="data.chart_type" [lineOptions]="data.lineOptions"></app-chart>
         }
         @else {
             <div class="error">

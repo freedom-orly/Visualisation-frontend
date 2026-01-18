@@ -6,6 +6,7 @@ export class ChartDTO {
   prediction: boolean;
   values: chartEntry[];
   chart_type: 'line' | 'bar';
+  lineOptions: 'y1' | 'y2';
 
   constructor(
     visualizationId: number,
@@ -21,6 +22,7 @@ export class ChartDTO {
     this.prediction = prediction;
     this.values = values;
     this.chart_type = chart_type;
+    this.lineOptions = 'y1';
   }
 }
 

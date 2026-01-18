@@ -92,6 +92,12 @@ export class VisualizationDetails {
           inputs: formGroup.value
         }      
       ).pipe(
+        map((chartDto: ChartDTO) => {
+          if (chartDto.name == 'Weather History'){
+            chartDto.lineOptions = 'y2';
+          }
+          return chartDto;
+        }),
         catchError((err) => {
           this.error = true;
           return of(new ChartDTO(id, 'Error', false, [], 'line'));
@@ -135,6 +141,13 @@ export class VisualizationDetails {
         id: id,
         inputs: form.value
       }      
+    ).pipe(
+      map((chartDto: ChartDTO) => {
+          if (chartDto.name == 'Weather History'){
+            chartDto.lineOptions = 'y2';
+          }
+          return chartDto;
+        }),
     )
   }
 

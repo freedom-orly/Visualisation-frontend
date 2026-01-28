@@ -1,11 +1,12 @@
-<div tuiAppearance="floating" (tuiHoveredChange)="onHover()" tuiSurface="floating" tuiCardLarge class="link-button-card">
+<div tuiAppearance="floating" (tuiHoveredChange)="onHover()" tuiSurface="floating" [tuiAppearance]="appearance"
+ tuiCardLarge class="link-button-card">
 
-    <section class="btn-body" (tuiHover)="onHover()" (click)="onClick()">
-        <tui-icon [icon]="icon" [style.font-size.rem]="2.5" />
+    <section class="btn-body" (tuiHover)="onHover()" (click)="onClick()" (tuiLeave)="onLeave()" (mouseleave)="onLeave()">
+        <tui-icon [icon]="icon" tuiAppearance="flat-grayscale" [style.font-size.rem]="2.5" />
         <header tuiHeader>
             <h2 tuiTitle>{{label}}</h2>
         </header>
-        <button appearance="primary" iconStart="@tui.chevron-right" size="l" tuiIconButton type="button"
+        <button [appearance]="appearance == 'secondary' ? 'primary': 'flat-grayscale'" iconStart="@tui.chevron-right" size="l" tuiIconButton type="button"
             [routerLink]="link"  [style.border-radius.%]="border"
         >
             {{label}}

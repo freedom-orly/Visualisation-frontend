@@ -4,7 +4,95 @@
 
 
 <div class="charts tui-space_top-10">
-    <app-chart class="chart" [data]="chartData" [type]="'bar'"></app-chart>
+    @if (anyData$ | async; as hasData) {
+    @if (!hasData.exists) {
+    <div class="chart">
+        <div tuiCardLarge class="add-data-info">
+            <header tuiHeader>
+                <h1 tuiTitle="l">
+                    <span tuiSubtitle>Add new data</span>
+                    Upload your data files to start visualizing!
+                </h1>
+            </header>
+            <section>
+                <p class="tui-space_bottom-5">
+                    This application really shines when you upload your own datasets. All of the default visualizations
+                    are dependent on user-provided data. Make this dashboard your own by adding your data!
+                </p>
+                <img src="/assets/upload_example.gif" alt="upload example"
+                    class="upload-example-image tui-space_bottom-4" />
+                <p class="tui-space_top-5">
+                    Easily upload your data files in various formats including CSV, JSON, and Excel. Start visualizing
+                    your data in minutes!
+                </p>
+            </section>
+            <footer>
+                <button tuiButton appearance="primary" [routerLink]="['/upload']" type="button">
+                    Go to Data Upload
+                    <tui-icon icon="@tui.arrow-right" class="tui-space_left-2"></tui-icon>
+                </button>
+            </footer>
+        </div>
+    </div>
+    <div class="chart">
+        <div tuiCardLarge class="add-data-info">
+            <header tuiHeader>
+                <h1 tuiTitle="l">
+                    <span tuiSubtitle>Explore Features</span>
+                    Discover powerful tools to analyze and visualize your data.
+                </h1>
+            </header>
+            <section>
+                <p class="tui-space_bottom-10">
+                    Dive into a suite of features designed to help you make sense of your data. From customizable charts
+                    to interactive dashboards, explore the tools that will bring your data to life.
+                </p>
+                <div class="split tui-space_bottom-4">
+
+                    <h5 tuiTitle="m">
+                        Visualization Options
+                        <span tuiSubtitle>
+                            Choose from a variety of visualizations including Scenario Engine, Sales forecast and more.
+                            Tailor your data presentation to best suit your analysis needs.
+                        </span>
+                    </h5>
+                    <img src="/assets/chart_example.gif" alt="chart example"
+                        class="upload-example-image tui-space_bottom-4" />
+                </div>
+                <div class="split tui-space_bottom-4">
+                    <img src="/assets/data_example.png" alt="data management example"
+                        class="upload-example-image tui-space_bottom-4" />
+                    <h5 tuiTitle="m">
+                        Data Management
+                        <span tuiSubtitle>
+                            Efficiently manage your datasets with easy upload, edit, and delete functionalities. Keep
+                            your
+                            data organized and accessible for seamless analysis.
+                        </span>
+                    </h5>
+                </div>
+
+                <div class="split ">
+                    <h5 tuiTitle="m">
+                        Readable Dashboard
+                        <span tuiSubtitle>
+                            See all your important metrics and visualizations in one place with our intuitive dashboard
+                            layout. Use quick links to navigate to different sections of the app.
+                        </span>
+                    </h5>
+                    <img src="/assets/dashboard_example.png" alt="dashboard example"
+                        class="upload-example-image tui-space_bottom-4" />
+                </div>
+            </section>
+        </div>
+    </div>
+    }
+    @else {
+    @if (resentRevenue$ | async; as revData) {
+    <app-chart class="chart" [data]="revData" [type]="'bar'">
+    </app-chart>
+    }
+    @if (recentWeather$ | async; as weatherData) {
     <div class="chart" tuiAppearance="floating" tuiCardLarge>
         <header tuiHeader>
             <h1 tuiTitle="l">
@@ -13,10 +101,19 @@
             </h1>
         </header>
         <section>
-            <canvas class="chart2" baseChart [data]="customChartData" [options]="customChartOptions" [type]="'line'"> </canvas>
+            <canvas class="chart2" baseChart [data]="getCustomData(weatherData)" [options]="customChartOptions" [type]="'line'">
+            </canvas>
         </section>
 
     </div>
+    }
+
+    }
+    }
+
+
+
+
 </div>
 
 <div class="buttons tui-space_top-6">

@@ -24,24 +24,10 @@ import { map, Observable } from 'rxjs';
 })
 export class Upload {
   protected current: VisualizationDTO | null = null;
+  protected selected: VisualizationDTO | null = null;
+  protected showSelected: boolean = false;
   protected visualizations$: Observable<VisualizationDTO[]> | null = null;
-  protected updates: UpdateDto[] = [
-    {
-      id: "1",
-      name: "Upload 1",
-      time: new Date('2023-01-31'),
-    },
-        {
-      id: "1",
-      name: "Upload 2",
-      time: new Date('2023-01-31'),
-    },
-        {
-      id: "1",
-      name: "Upload 3",
-      time: new Date('2023-01-31'),
-    }
-  ];
+  protected updates: Observable<UpdateDto[]> | null = null; 
   readonly breadcrumbsItems = [
     {
       caption: 'Home',
@@ -68,8 +54,29 @@ export class Upload {
   }
 
   changeVisualization(vis: VisualizationDTO) {
+        this.showSelected = false;
         this.current = vis;
-    this.current.last_updates = this.updates;
+        this.updates = this.HttpService.getUpdatesForVisualization(vis.id).pipe(
+          map(u => {
+            this.current!.last_updates = u;
+            return u;
+          })  
+        );
+  }
+
+  selectVisualization(vis: VisualizationDTO) {
+
+        this.selected = vis;
+        this.updates = this.HttpService.getUpdatesForVisualization(vis.id).pipe(
+          map(u => {
+            this.selected!.last_updates = u;
+            return u;
+          })  
+        );
+  }
+
+  clearCurrent() {
+    this.showSelected = true;
   }
 
 

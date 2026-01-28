@@ -6,13 +6,30 @@
 <hr>
 <div class="split">
     <div class="left-panel">
+        @if (dataFiles$ | async; as dataFiles) {
+        @if (dataFiles.length == 0 && this.warningClosed == false) {
+        <div class="warning" tuiCardLarge tuiHeader tuiAppearance="warning">
+            <h3 tuiTitle="s">No data files available
+                <span tuiSubtitle>Please upload data files to visualize the data.</span>
+            </h3>
+            <aside tuiAccessories>
+                <button appearance="glass" tuiButtonClose tuiIconButton (click)="closeWarning()" type="button">
+                    Close
+                </button>
+            </aside>
 
+        </div>
+        }
+        }
         @if (chartData$ | async; as data ) {
         @if (!this.error) {
-        <app-chart [data]="data"></app-chart>
+        <app-chart [data]="data" [type]="data.chart_type" [lineOptions]="data.lineOptions"></app-chart>
         }
         @else {
-        <tui-icon [style.color]="'var(--tui-text-negative)'" icon="@tui.circle-x"></tui-icon>
+            <div class="error">
+                <tui-icon [style.color]="'var(--tui-text-negative)'" icon="@tui.circle-x"></tui-icon>
+            </div>
+        
         }
         }
         @else {
@@ -22,7 +39,7 @@
     </div>
     <div class="right-panel">
         <div class="subright">
-            <form [formGroup]="reqFrom" (ngSubmit)="UpdateChart()" tuiAppearance="floating" tuiCardLarge>
+            <!-- <form [formGroup]="reqFrom" (ngSubmit)="UpdateChart()" tuiAppearance="floating" tuiCardLarge>
                 <section>
                     <div class="dates">
                         <tui-textfield class="tui-space_top-2">
@@ -50,7 +67,15 @@
                         Update
                     </button>
                 </footer>
-            </form>
+            </form> -->
+            @if (visualizationId$) {
+            @if (visualizationId$ | async; as visualizationId) {
+            <app-dynamic-inputs #dynamicInputs [visualizationId]="visualizationId" [formReady]="formReady$"
+                (SubmitForm)="UpdateChart($event)"></app-dynamic-inputs>
+            }
+            }
+
+
         </div>
 
 
@@ -58,6 +83,6 @@
 </div>
 
 <div class="export-btn">
-    <app-link-button [icon]="'@tui.download'" [label]="'Export this data'"
+    <app-link-button class="export-btn-btn" [icon]="'@tui.download'" [label]="'Export this data'"
         [link]="'/export-visualization'"></app-link-button>
 </div>

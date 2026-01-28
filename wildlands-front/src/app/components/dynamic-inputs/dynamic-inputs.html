@@ -1,0 +1,99 @@
+<div class="subright">
+    <form [formGroup]="formGroup" (ngSubmit)="UpdateChart()" tuiAppearance="floating" tuiCardLarge>
+        <section>
+            @if (inputFields) {
+            <div class="dates">
+                @for (field of inputFields; track $index) {
+                <tui-textfield class="tui-space_top-2" *ngIf="field.field_type === 'date'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiInputDate [formControlName]="field.field_name" />
+                    <tui-calendar *tuiTextfieldDropdown />
+                </tui-textfield>
+                }
+            </div>
+            <div class="select">
+                @for (field of inputFields; track $index) {
+                <tui-textfield class="tui-space_top-2" *ngIf="field.field_type === 'select'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiSelect [formControlName]="field.field_name" />
+
+                    <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="field.options" />
+                </tui-textfield>
+                }
+            </div>
+            <div class="multiSelect">
+                @for (field of inputFields; track $index) {
+                <tui-textfield class="tui-space_top-2" *ngIf="field.field_type === 'selectMulti'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiSelectLike [multiple]="true" [placeholder]="field.default_value ?? ''"
+                        [formControlName]="field.field_name" />
+                    <tui-data-list-wrapper *tuiTextfieldDropdown new tuiMultiSelectGroup [items]="field.options" />
+                </tui-textfield>
+                }
+            </div>
+            <div class="textInput">
+                @for (field of inputFields; track $index) {
+                <tui-textfield class="tui-space_top-2" *ngIf="field.field_type === 'text'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiInput [formControlName]="field.field_name" [placeholder]="field.default_value ?? ''" />
+                </tui-textfield>
+                }
+            </div>
+            }
+            @else {
+            @if (inputFields$ | async; as inputFields) {
+            <div class="dates">
+                @for (field of inputFields; track $index) {
+                <tui-textfield class="tui-space_top-2" *ngIf="field.field_type === 'date'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiInputDate [formControlName]="field.field_name" />
+                    <tui-calendar *tuiTextfieldDropdown />
+                </tui-textfield>
+                }
+            </div>
+            <div class="select">
+                @for (field of inputFields; track $index) {
+                <tui-textfield class="tui-space_top-2" *ngIf="field.field_type === 'select'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiSelect [formControlName]="field.field_name" />
+
+                    <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="field.options" />
+                </tui-textfield>
+                }
+            </div>
+            <div class="multiSelect">
+                @for (field of inputFields; track $index) {
+                <tui-textfield multi tuiChevron class="tui-space_top-2" *ngIf="field.field_type === 'selectMulti'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input  tuiInputChip tuiSelectLike [multiple]="true" [placeholder]="field.default_value ?? ''"
+                        [formControlName]="field.field_name" [(ngModel)]="multi[$index]" />
+                    <tui-data-list-wrapper *tuiTextfieldDropdown new tuiMultiSelectGroup [items]="field.options" />
+                </tui-textfield>
+                }
+            </div>
+            <div class="textInput">
+                @for (field of inputFields; track $index) {
+                <tui-textfield  class="tui-space_top-2" *ngIf="field.field_type === 'text'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiTextfield [formControlName]="field.field_name" [placeholder]="field.default_value ?? ''" />
+                </tui-textfield>
+                }
+            </div>
+            <div class="numbers">
+                @for (field of inputFields; track $index) {
+                <tui-textfield class="tui-space_top-2" *ngIf="field.field_type === 'number'">
+                    <label tuiLabel>{{field.field_label}}</label>
+                    <input tuiInputNumber [formControlName]="field.field_name" [placeholder]="field.default_value ?? ''" />
+                </tui-textfield>
+                }
+            </div>
+            }
+            }
+        </section>
+        <footer>
+            <button appearance="success" size="m" [disabled]="!formGroup.valid" tuiButton type="submit">
+                Update
+            </button>
+        </footer>
+    </form>
+</div>

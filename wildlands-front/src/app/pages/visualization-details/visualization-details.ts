@@ -153,7 +153,50 @@ export class VisualizationDetails {
 
   closeWarning() {
     this.warningClosed = true;
-}
+  }
+
+  exportData() {
+    if (!this.chartData$) {
+      console.error('No chart data available to export');
+      return;
+    }
+
+    this.chartData$.subscribe((chartData: ChartDTO) => {
+      // Convert chart data to CSV format
+      let csvContent = '';
+      
+      // Add headers
+      const headers = ['Series'];
+      if (chartData.values.length > 0 && chartData.values[0].values.length > 0) {
+        // Assuming all series have the same x-axis values
+        const xValues = chartData.values[0].values.map(point => point.x);
+        headers.push(...xValues.map(x => String(x)));
+      }
+      csvContent += headers.join(',') + '\n';
+      
+      // Add data rows
+      chartData.values.forEach((entry: any) => {
+        const row = [entry.name];
+        entry.values.forEach((point: any) => {
+          row.push(String(point.y));
+        });
+        csvContent += row.join(',') + '\n';
+      });
+      
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${chartData.name}_export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
 
   
 }
